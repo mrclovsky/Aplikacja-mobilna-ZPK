@@ -25,6 +25,7 @@ import {
 
 import { createCameraController } from "./map/cameraController";
 import { createProximityChecker } from "./map/proximityChecker";
+import { t } from "i18next";
 
 const THEME = {
   primary: "#004d00",
@@ -347,6 +348,7 @@ export default function MapScreen({ selectedRoute }: MapScreenProps) {
           canStart={canStart}
           onPress={navigationActive ? handleStop : handleStart}
           primaryColor={THEME.primary}
+          labels={{ start: t("start"), stop: t("stop") }}
         />
 
         {navigationActive && (

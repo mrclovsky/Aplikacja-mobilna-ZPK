@@ -52,11 +52,13 @@ export function StartStopButton({
   canStart,
   onPress,
   primaryColor = "#004d00",
+  labels = { start: "START", stop: "STOP" },
 }: {
   navigationActive: boolean;
   canStart: boolean;
   onPress: () => void;
   primaryColor?: string;
+  labels?: { start: string; stop: string };
 }) {
   // aktywny, gdy trwa nawigacja (STOP) albo można wystartować (START)
   const enabled = navigationActive || canStart;
@@ -74,7 +76,7 @@ export function StartStopButton({
       accessibilityState={{ disabled: !enabled }}
     >
       <Text style={styles.startButtonText}>
-        {navigationActive ? "STOP" : "START"}
+        {navigationActive ? labels.stop : labels.start}
       </Text>
     </TouchableOpacity>
   );
