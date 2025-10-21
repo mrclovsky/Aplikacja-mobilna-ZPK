@@ -22,6 +22,7 @@ import { GestureHandlerRootView, Swipeable } from "react-native-gesture-handler"
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { File, Paths } from "expo-file-system";
 import { Achievement } from "../../assets/types";
+import { t } from "i18next";
 
 const THEME = {
   bgCard: "rgba(0,0,0,0.4)",
@@ -91,10 +92,10 @@ export default function AchievementsScreen() {
     const index = achievements.findIndex((a) => a.id === id);
     if (index === -1) return;
 
-    Alert.alert("Usuń osiągnięcie", "Czy na pewno chcesz usunąć to osiągnięcie?", [
-      { text: "Anuluj", style: "cancel" },
+    Alert.alert(t("deleteAchievement"), t("deleteAchievementQuestion"), [
+      { text: t("cancel"), style: "cancel" },
       {
-        text: "Usuń",
+        text: t("delete"),
         style: "destructive",
         onPress: () => animateAndRemove(id, index),
       },

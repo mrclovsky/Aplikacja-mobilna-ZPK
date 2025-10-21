@@ -17,6 +17,10 @@
   "logoutButton": "Вийти",
 
   "achievementsPage": "Досягнення",
+  "deleteAchievement": "Видалити досягнення",
+  "deleteAchievementQuestion": "Ви впевнені, що хочете видалити це досягнення?",
+  "cancel": "Скасувати",
+  "delete": "Видалити",
 
   "routePage": "Маршрут",
   "start": "СТАРТ", 

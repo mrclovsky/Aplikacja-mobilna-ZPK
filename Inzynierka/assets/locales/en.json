@@ -17,6 +17,10 @@
   "logoutButton": "Logout",
 
   "achievementsPage": "Achievements",
+  "deleteAchievement": "Delete achievement",
+  "deleteAchievementQuestion": "Are you sure you want to delete this achievement?",
+  "cancel": "Cancel",
+  "delete": "Delete",
 
   "routePage": "Route",
   "start": "START",

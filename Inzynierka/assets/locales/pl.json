@@ -17,6 +17,10 @@
   "logoutButton": "Wyloguj",
 
   "achievementsPage": "Osiągniecia",
+  "deleteAchievement": "Usuń osiągnięcie",
+  "deleteAchievementQuestion": "Czy na pewno chcesz usunąć to osiągnięcie?",
+  "cancel": "Anuluj",
+  "delete": "Usuń",
 
   "routePage": "Trasa",
   "start": "START", 

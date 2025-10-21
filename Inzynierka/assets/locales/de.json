@@ -17,6 +17,10 @@
   "logoutButton": "Abmelden",
 
   "achievementsPage": "Erfolge",
+  "deleteAchievement": "Errungenschaft löschen",
+  "deleteAchievementQuestion": "Bist du sicher, dass du diese Errungenschaft löschen möchtest?",
+  "cancel": "Abbrechen",
+  "delete": "Löschen",
 
   "routePage": "Route",
   "start": "START", 
