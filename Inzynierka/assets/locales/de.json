@@ -1,0 +1,44 @@
+{
+  "home": "Startseite",
+  
+  "welcome": "Hallo!",
+  "login": "Anmelden",
+  "register": "Registrieren",
+
+  "loginTitle": "Anmeldung",
+  "username": "Benutzername",
+  "password": "Passwort",
+
+  "registerTitle": "Registrierung",
+  "email": "E-Mail",
+  "confirmPassword": "Passwort bestätigen",
+
+  "settingsPage": "Einstellungen",
+  "logoutButton": "Abmelden",
+
+  "achievementsPage": "Erfolge",
+
+  "routePage": "Route",
+  "start": "START", 
+  "stop": "STOPP",
+
+  "routesListPage": "Routenliste",
+  "myRoutes": "Meine",
+  "recomendedRoutes": "Empfohlen",
+
+  "setQR": "QR-Code im Rahmen ausrichten",
+  "scanAgain": "Erneut scannen",
+  "openLink": "Link öffnen",
+  "checkingPermissions": "Kameraberechtigungen werden geprüft…",
+  "failedPermissions": "Kein Kamerazugriff.",
+  "openSettings": "Einstellungen öffnen",
+
+  "unknownError": "Unbekannter Code\nRichtigen QR-Code scannen",
+  "routeMissingError": "Keine Route\nScanner neu starten",
+  "routeError": "Routenfehler\nScanner neu starten",
+  "notInRouteError": "Punkt liegt nicht auf der Route\nZur gewählten Route zurückkehren",
+  "tooFarError": "Zu weit entfernt - {{dist}} m\nNäher an den Punkt gehen",
+  "noGpsError": "Keine Position\nGPS einschalten",
+  "success": "Punkt {{id}} abgeschlossen",
+  "defaultError": "Lesefehler"
+}

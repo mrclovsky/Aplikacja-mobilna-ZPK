@@ -1,0 +1,44 @@
+{
+  "home": "Homepage",
+  
+  "welcome": "Hello!",
+  "login": "Login",
+  "register": "Register",
+
+  "loginTitle": "Login",
+  "username": "Username",
+  "password": "Password",
+
+  "registerTitle": "Registration",
+  "email": "E-mail",
+  "confirmPassword": "Confirm Password",
+
+  "settingsPage": "Settings",
+  "logoutButton": "Logout",
+
+  "achievementsPage": "Achievements",
+
+  "routePage": "Route",
+  "start": "START",
+  "stop": "STOP",
+  
+  "routesListPage": "Routes List",
+  "myRoutes": "Mine",
+  "recomendedRoutes": "Recomended",
+
+  "setQR": "Align the QR code in the frame",
+  "scanAgain": "Scan again",
+  "openLink": "Open link",
+  "checkingPermissions": "Checking camera permissions…",
+  "failedPermissions": "Camera access denied.",
+  "openSettings": "Open settings",
+
+  "unknownError": "Unknown code\nScan the correct QR code",
+  "routeMissingError": "No route\nRestart the scanner",
+  "routeError": "Route error\nRestart the scanner",
+  "notInRouteError": "Point not on route\nReturn to the selected route",
+  "tooFarError": "Too far - {{dist}} m\nMove closer to the point",
+  "noGpsError": "No location\nTurn on GPS",
+  "success": "Point {{id}} completed",
+  "defaultError": "Read error"
+}

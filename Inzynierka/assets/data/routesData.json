@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "points": [
+    { "id": "01", "type": "physical", "radius": 10, "lat": 54.378563, "lng": 18.617426, "qr": "P01-7K3D9B" },
+    { "id": "02", "type": "virtual",  "radius": 10, "lat": 54.378129, "lng": 18.617121 },
+    { "id": "03", "type": "physical", "radius": 10, "lat": 54.378422, "lng": 18.617065, "qr": "P03-Q2M8FZ" },
+
+    { "id": "04", "type": "virtual",  "radius": 10, "lat": 54.378191, "lng": 18.617347 },
+    { "id": "05", "type": "physical", "radius": 10, "lat": 54.378501, "lng": 18.617322, "qr": "P05-AB12CD" },
+    { "id": "06", "type": "virtual",  "radius": 10, "lat": 54.378348, "lng": 18.617093 },
+    { "id": "07", "type": "physical", "radius": 10, "lat": 54.378235, "lng": 18.617408, "qr": "P07-X9Y7W1" }
+  ],
+  "suggestedRoutes": [
+    {
+      "name": "Leśna Ścieżka",
+      "description": "Przez gęsty las, idealna dla miłośników natury.",
+      "lengthKm": 5,
+      "defaultPoints": 3,
+      "pointRefs": [
+        { "pointId": "01", "order": 1 },
+        { "pointId": "02", "order": 2 },
+        { "pointId": "03", "order": 3 }
+      ]
+    },
+    {
+      "name": "Nadbrzeżna Trasa",
+      "description": "Piękne widoki nad wodą, kilka punktów widokowych.",
+      "lengthKm": 12,
+      "defaultPoints": 4,
+      "pointRefs": [
+        { "pointId": "04", "order": 1 },
+        { "pointId": "05", "order": 2 },
+        { "pointId": "06", "order": 3 },
+        { "pointId": "07", "order": 4 }
+      ]
+    }
+  ],
+  "myRoutes": [
+    {
+      "name": "Parkowa Pętla",
+      "description": "Krótka pętla po parku z jednym punktem fizycznym.",
+      "lengthKm": 3,
+      "defaultPoints": 3,
+      "pointRefs": [
+        { "pointId": "02", "order": 1 },
+        { "pointId": "04", "order": 2 },
+        { "pointId": "05", "order": 3 }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "home": "Головна сторінка",
+  
+  "welcome": "Привіт!",
+  "login": "Увійти",
+  "register": "Зареєструватися",
+
+  "loginTitle": "Вхід",
+  "username": "Ім'я користувача",
+  "password": "Пароль",
+
+  "registerTitle": "Реєстрація",
+  "email": "Електронна пошта",
+  "confirmPassword": "Підтвердіть пароль",
+
+  "settingsPage": "Налаштування",
+  "logoutButton": "Вийти",
+
+  "achievementsPage": "Досягнення",
+
+  "routePage": "Маршрут",
+  "start": "СТАРТ", 
+  "stop": "СТОП",
+  
+  "routesListPage": "Список маршрутів",
+  "myRoutes": "Мої",
+  "recomendedRoutes": "Рекомендовані",
+
+  "setQR": "Вирівняйте QR-код у рамці",
+  "scanAgain": "Сканувати ще раз",
+  "openLink": "Відкрити посилання",
+  "checkingPermissions": "Перевірка дозволів камери…",
+  "failedPermissions": "Немає доступу до камери.",
+  "openSettings": "Відкрити налаштування",
+
+  "unknownError": "Невідомий код\nПроскануйте правильний QR-код",
+  "routeMissingError": "Немає маршруту\nПерезапустіть сканер",
+  "routeError": "Помилка маршруту\nПерезапустіть сканер",
+  "notInRouteError": "Точка поза маршрутом\nПоверніться до вибраного маршруту",
+  "tooFarError": "Занадто далеко - {{dist}} м\nПідійдіть ближче до точки",
+  "noGpsError": "Немає геопозиції\nУвімкніть GPS",
+  "success": "Точку {{id}} зараховано",
+  "defaultError": "Помилка зчитування"
+}

@@ -1,0 +1,44 @@
+{
+  "home": "Strona Główna",
+
+  "welcome": "Witaj!",
+  "login": "Zaloguj się",
+  "register": "Zarejestruj się",
+
+  "loginTitle": "Logowanie",
+  "username": "Nazwa użytkownika",
+  "password": "Hasło",
+
+  "registerTitle": "Rejestracja",
+  "email": "E-mail",
+  "confirmPassword": "Potwierdź hasło",
+
+  "settingsPage": "Ustawienia",
+  "logoutButton": "Wyloguj",
+
+  "achievementsPage": "Osiągniecia",
+
+  "routePage": "Trasa",
+  "start": "START", 
+  "stop": "STOP",
+
+  "routesListPage": "Lista Tras",
+  "myRoutes": "Moje",
+  "recomendedRoutes": "Polecane",
+
+  "setQR": "Ustaw kod QR w ramce",
+  "scanAgain": "Skanuj ponownie",
+  "openLink": "Otwórz link",
+  "checkingPermissions": "Trwa sprawdzanie uprawnień do aparatu…",
+  "failedPermissions": "Brak dostępu do aparatu.",
+  "openSettings": "Otwórz ustawienia",
+
+  "unknownError": "Nieznany kod\nZeskanuj właściwy kod QR",
+  "routeMissingError": "Brak trasy\nUruchom ponownie skaner",
+  "routeError": "Błąd trasy\nUruchom ponownie skaner",
+  "notInRouteError": "Punkt poza trasą\nWróć do wybranej trasy",
+  "tooFarError": "Zbyt daleko - {{dist}} m\nPodejdź bliżej punktu",
+  "noGpsError": "Brak lokalizacji\nWłącz GPS",
+  "success": "Zaliczono punkt {{id}}",
+  "defaultError": "Błąd odczytu"
+}
