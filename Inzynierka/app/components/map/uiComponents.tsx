@@ -1,30 +1,18 @@
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+// app/components/map/uiComponents.tsx
+import React, { useEffect, useRef, useState } from "react";
+import {
+  Animated,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-/**
- * Prezentacyjny znacznik punktu trasy.
- * Wariant: visited/physical/virtual – zmienia kolor środkowej kropki.
- */
-export function PointMarker({ variant }: { variant: "visited" | "physical" | "virtual" }) {
-  return (
-    <View style={styles.pointOuter}>
-      <View
-        style={
-          variant === "visited"
-            ? styles.pointInnerVisited
-            : variant === "physical"
-            ? styles.pointInnerPhysical
-            : styles.pointInnerVirtual
-        }
-      />
-    </View>
-  );
-}
+/** Stałe **/
+const MAP_BUTTON_WIDTH = 100;
+const MAP_BUTTON_HEIGHT = 40;
 
-/**
- * Baner z nazwą trasy wyświetlany w górnej części ekranu.
- */
 export function RouteNameBanner({ title }: { title: string }) {
   return (
     <View style={styles.routeNameContainer}>
@@ -33,9 +21,6 @@ export function RouteNameBanner({ title }: { title: string }) {
   );
 }
 
-/**
- * Baner komunikatów o bliskości/zaliczeniu punktu.
- */
 export function ProximityBanner({ text }: { text: string }) {
   return (
     <View style={styles.proximityBanner}>
@@ -44,9 +29,7 @@ export function ProximityBanner({ text }: { text: string }) {
   );
 }
 
-/**
- * Główny przycisk START/STOP. Używa stylu „disabled”, gdy nie można zacząć.
- */
+/** Start/Stop (środek wrappera) **/
 export function StartStopButton({
   navigationActive,
   canStart,
@@ -60,7 +43,6 @@ export function StartStopButton({
   primaryColor?: string;
   labels?: { start: string; stop: string };
 }) {
-  // aktywny, gdy trwa nawigacja (STOP) albo można wystartować (START)
   const enabled = navigationActive || canStart;
 
   return (
@@ -69,22 +51,18 @@ export function StartStopButton({
         styles.startButton,
         enabled ? { backgroundColor: primaryColor } : styles.startButtonDisabled,
       ]}
-      onPress={enabled ? onPress : undefined}  
-      disabled={!enabled}                       
+      onPress={enabled ? onPress : undefined}
+      disabled={!enabled}
       activeOpacity={enabled ? 0.7 : 1}
       accessibilityRole="button"
       accessibilityState={{ disabled: !enabled }}
     >
-      <Text style={styles.startButtonText}>
-        {navigationActive ? labels.stop : labels.start}
-      </Text>
+      <Text style={styles.startButtonText}>{navigationActive ? labels.stop : labels.start}</Text>
     </TouchableOpacity>
   );
 }
 
-/**
- * Przycisk przełączania trybu kamery (wolny/śledzenie), po lewej stronie dolnego wiersza.
- */
+/** ToggleTrackingButton - lewy (pod MapSelect) **/
 export function ToggleTrackingButton({
   tracking,
   onPress,
@@ -98,8 +76,7 @@ export function ToggleTrackingButton({
   return (
     <TouchableOpacity
       style={[
-        styles.centerButtonBase,
-        tracking ? styles.centerButtonTrack : styles.centerButtonFree,
+        styles.uiButtonBase,styles.toggleButton,
         tracking ? { borderColor: colors.onSurface, backgroundColor: "#fff" } : { borderColor: colors.primary, backgroundColor: colors.primary },
       ]}
       onPress={onPress}
@@ -110,21 +87,16 @@ export function ToggleTrackingButton({
   );
 }
 
-/**
- * Przycisk otwarcia skanera QR, po prawej stronie dolnego wiersza.
- */
+/** ScanQRButton - prawy **/
 export function ScanQRButton({ onPress }: { onPress: () => void }) {
   return (
-    <TouchableOpacity style={styles.scanButton} onPress={onPress}>
+    <TouchableOpacity style={[styles.uiButtonBase]} onPress={onPress}>
       <Ionicons name="qr-code-outline" size={20} color="#000" />
     </TouchableOpacity>
   );
 }
 
-/**
- * Zestaw liczników HUD (czas, licznik punktów i dystans) pozycjonowanych w górnej części ekranu.
- * Oczekuje już sformatowanych stringów.
- */
+/** HUD counters **/
 export function HudCounters({
   elapsed,
   points,
@@ -153,14 +125,135 @@ export function HudCounters({
   );
 }
 
-/* ===== Style prezentacyjne przeniesione z mapScreen ===== */
+export function MapSelectButton({
+  selectedIndex,
+  onSelect,
+  entries,
+  navigationActive,
+  labels = { none: "Brak", mapPrefix: "M" },
+}: {
+  selectedIndex: number;
+  onSelect: (index: number) => void;
+  entries: string[]; // entries[0] = 'Brak'
+  navigationActive: boolean;
+  labels?: { none: string; mapPrefix?: string };
+}) {
+  const [open, setOpen] = useState(false);
+  const anim = useRef(new Animated.Value(navigationActive ? 1 : 0)).current;
 
+  useEffect(() => {
+    Animated.timing(anim, {
+      toValue: navigationActive ? 1 : 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+  }, [navigationActive, anim]);
+
+  const toggleOpen = () => setOpen((s) => !s);
+  const handleSelect = (idx: number) => {
+    onSelect(idx);
+    setOpen(false);
+  };
+
+  const entriesReversed = entries.slice().reverse();
+  const label = selectedIndex === 0 ? labels.none : `${labels.mapPrefix ?? "M"}${selectedIndex}`;
+
+  // raise przy navigationActive (delikatne uniesienie nad Toggle)
+  const raiseOnNav = anim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, -45], // -10px uniesienia — dostosuj jeśli chcesz mniej/więcej
+  });
+
+  // lista otwiera się w górę — liczymy translację w górę o wysokość listy
+  const LIST_GAP = 6;
+
+  const listOffset = useRef(new Animated.Value(open ? 1 : 0)).current;
+
+  useEffect(() => {
+    Animated.timing(listOffset, {
+      toValue: open ? 1 : 0,
+      duration: 180,
+      useNativeDriver: true,
+    }).start();
+  }, [open, listOffset]);
+
+  return (
+    <>
+      {/* Lista: pozycjonowana względem osi środka wrappera i przesuwana WYŻEJ (ujemne translateY) */}
+      {open && (
+        <Animated.View
+          style={[
+            styles.mapSelectListContainer,
+            {
+              bottom: MAP_BUTTON_HEIGHT + LIST_GAP,
+              opacity: listOffset,
+              transform:[{ translateY: Animated.add(raiseOnNav, 
+                listOffset.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [6, 0],
+                })) }],
+            },
+          ]}
+        >
+          {entriesReversed.map((labelText, revIdx) => {
+            const originalIdx = entries.length - 1 - revIdx;
+            const isSelected = selectedIndex === originalIdx;
+            return (
+              <TouchableOpacity
+                key={`${labelText}-${originalIdx}`}
+                style={[styles.mapSelectListItem, isSelected ? styles.mapSelectListItemSelected : null]}
+                onPress={() => handleSelect(originalIdx)}
+                activeOpacity={0.85}
+              >
+                <Text style={[styles.mapSelectListText, isSelected ? styles.mapSelectListTextSelected : null]}>
+                  {labelText}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </Animated.View>
+      )}
+
+      {/* Przycisk: umieszczony dokładnie na tej samej osi Y co ToggleTracking (top:'50%' + translateY(-h/2)), 
+          oraz animacja podnoszenia przy navigationActive */}
+      <Animated.View
+        style={[
+          styles.mapSelectButtonWrapper,
+          {
+            transform: [{ translateY: raiseOnNav }],
+          },
+        ]}
+        pointerEvents="box-none"
+      >
+        <TouchableOpacity
+          style={[styles.uiButtonBase, styles.mapSelectButtonInner]}
+          onPress={toggleOpen}
+          activeOpacity={0.85}
+          accessibilityRole="button"
+          accessibilityLabel="Wybór mapy"
+        >
+          <View style={styles.mapSelectContentInline}>
+            <Ionicons name="map-outline" size={18} color="#000" />
+            <Text numberOfLines={1} ellipsizeMode="tail" style={styles.mapSelectLabel}>
+              {label}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </Animated.View>
+    </>
+  );
+}
+
+/* ===== Style ===== */
 const styles = StyleSheet.create({
   // Start/Stop
   startButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 40,
+    height: MAP_BUTTON_HEIGHT,
+    minWidth: MAP_BUTTON_WIDTH + 32, 
+    paddingHorizontal: 24,
     borderRadius: 20,
+    justifyContent: "center", 
+    alignItems: "center",
     elevation: 3,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -175,37 +268,83 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+    textTransform: "uppercase",
   },
 
-  // Toggle tracking (lewy przycisk w bottom row)
-  centerButtonBase: {
-    position: "absolute",
-    left: 20,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 32,
+  uiButtonBase: {
+    height: MAP_BUTTON_HEIGHT,
+    width: MAP_BUTTON_WIDTH,
     borderRadius: 20,
     borderWidth: 2,
-  },
-  centerButtonFree: {},
-  centerButtonTrack: {},
-
-  // Scan QR (prawy przycisk w bottom row)
-  scanButton: {
-    position: "absolute",
-    right: 20,
     backgroundColor: "#fff",
+    borderColor: "#000",
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 20,
-    borderWidth: 2,
-    borderColor: "#000",
+    justifyContent: "center",
+    elevation: 3,
   },
 
-  // HUD counters
+  // ToggleTracking — lewy, wyrównany do środka wrappera
+  toggleButton: {
+    paddingHorizontal: 8,
+  },
+
+  mapSelectButtonInner: {
+    paddingHorizontal: 8, // tylko to, czego NIE ma w bazie
+  },
+
+  mapSelectButtonWrapper: {
+    position: "absolute",
+    left: 0,
+    zIndex: 60,
+  },
+
+  mapSelectContentInline: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  
+  mapSelectLabel: {
+    marginLeft: 8,
+    fontSize: 14,
+    color: "#000",
+    fontWeight: "600",
+    flexShrink: 1,
+    textAlign: "left",
+  },
+
+  // Lista pojawiająca się NAD przyciskiem
+  mapSelectListContainer: {
+    position: "absolute",
+    width: MAP_BUTTON_WIDTH,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    paddingVertical: 4,
+    elevation: 6,
+    zIndex: 70,
+  },
+  mapSelectListItem: {
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+  },
+  mapSelectListItemSelected: {
+    backgroundColor: "rgba(0,0,0,0.06)",
+  },
+  mapSelectListText: {
+    fontSize: 14,
+    color: "#000",
+  },
+  mapSelectListTextSelected: {
+    fontWeight: "700",
+  },
+
+  // HUD counters (bez zmian)
   timerContainerRight: {
     position: "absolute",
     top: 60,
@@ -280,40 +419,5 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "700",
-  },
-
-  // Marker punktu
-  pointOuter: {
-    width: 20,
-    height: 20,
-    borderRadius: 9,
-    backgroundColor: "#ffffff",
-    borderWidth: 2,
-    borderColor: "#ffffff",
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.25,
-    shadowRadius: 1.5,
-    elevation: 2,
-  },
-  pointInnerVirtual: {
-    width: 10,
-    height: 10,
-    borderRadius: 6,
-    backgroundColor: "#8A2BE2",
-  },
-  pointInnerPhysical: {
-    width: 10,
-    height: 10,
-    borderRadius: 6,
-    backgroundColor: "red",
-  },
-  pointInnerVisited: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: "#00FF30",
   },
 });

@@ -1,0 +1,46 @@
+{
+  "region": "Grabowek",
+  "world": {
+    "A": 1,
+    "D": 0,
+    "B": 0,
+    "E": -1,
+    "C": 466050.5,
+    "F": 740649.5,
+    "world_array": [1, 0, 0, -1, 466050.5, 740649.5]
+  },
+  "points": [
+    {
+      "x": 466050.0,
+      "y": 740650.0,
+      "symbol": "DOT_CUSTOM_3_255_188_104",
+      "heading": "90° 00' 00.000\"",
+      "segmentLength": "2.5 km",
+      "totalLength": "---"
+    },
+    {
+      "x": 468548.289,
+      "y": 740650.0,
+      "symbol": "DOT_CUSTOM_3_255_188_104",
+      "heading": "180° 00' 00.000\"",
+      "segmentLength": "3.4 km",
+      "totalLength": "2.5 km"
+    },
+    {
+      "x": 468548.289,
+      "y": 737252.332,
+      "symbol": "DOT_CUSTOM_3_255_188_104",
+      "heading": "270° 00' 00.000\"",
+      "segmentLength": "2.5 km",
+      "totalLength": "5.9 km"
+    },
+    {
+      "x": 466050.0,
+      "y": 737252.332,
+      "symbol": "DOT_CUSTOM_3_255_188_104",
+      "heading": "---",
+      "segmentLength": "---",
+      "totalLength": "8.4 km"
+    }
+  ]
+}

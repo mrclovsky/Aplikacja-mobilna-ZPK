@@ -1,14 +1,5 @@
 // app/components/routesListScreen.tsx
 // Lista tras z dwiema zakładkami: polecane oraz moje.
-// Funkcjonalność:
-// - Przełączanie zakładek z wyróżnieniem aktywnej.
-// - Rozwijanie i zwijanie szczegółów trasy z animacją układu.
-// - Przewinięcie listy na górę po zmianie zakładki.
-// - Wybór trasy i przekazanie jej do komponentu nadrzędnego.
-// Struktura:
-// - Konfiguracja zakładek (etykiety i źródła danych) w jednym miejscu.
-// - Komponenty prezentacyjne: TabButton i RouteCard.
-// - Brak duplikacji styli; aktywne/nieaktywne stany oparte o te same bazowe style.
 
 import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import {
@@ -20,12 +11,15 @@ import {
   TouchableOpacity,
   UIManager,
   View,
+  SafeAreaView,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useTranslation } from "react-i18next";
+
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import routesData from "../../assets/data/routesData.json";
 import type { DataFile, Route } from "../../assets/types";
+import { t } from "i18next";
 
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -45,9 +39,12 @@ const THEME = {
   shadow: "#000",
 };
 
+// Podnieśliśmy TOP_MARGIN żeby przyciski były mocniej obniżone
+const TOP_MARGIN = 64; // wcześniej 8
+
 export default function RoutesListScreen({ onSelectRoute }: RoutesListScreenProps) {
-  const { t } = useTranslation();
   const scrollRef = useRef<ScrollView>(null);
+  const insets = useSafeAreaInsets();
 
   const [activeTab, setActiveTab] = useState<TabKey>("suggested");
   const [expandedRoutes, setExpandedRoutes] = useState<Record<string, boolean>>({});
@@ -83,10 +80,26 @@ export default function RoutesListScreen({ onSelectRoute }: RoutesListScreenProp
     onSelectRoute(route);
   }, [onSelectRoute]);
 
+  // Paddingy uwzględniające safe area i navbar od dołu
+  const containerPaddingTop = (insets.top ?? 0) + TOP_MARGIN;
+  const containerPaddingBottom = 0;
+  const containerPaddingHorizontal = Math.max(12, (insets.left ?? 0), (insets.right ?? 0));
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView
+      style={[
+        styles.container,
+        {
+          paddingTop: containerPaddingTop,
+          paddingBottom: 0,
+          paddingHorizontal: 0,
+        },
+      ]}
+    >
       {/* Pasek zakładek */}
-      <View style={styles.tabContainer}>
+      <View style={[styles.tabContainer,{
+        paddingHorizontal: containerPaddingHorizontal, // ✅ WYRÓWNANIE Z LISTĄ
+          },]}>
         {tabs.map((tab) => (
           <TabButton
             key={tab.key}
@@ -101,7 +114,9 @@ export default function RoutesListScreen({ onSelectRoute }: RoutesListScreenProp
       <ScrollView
         ref={scrollRef}
         style={styles.routesContainer}
-        contentContainerStyle={styles.routesContent}
+          contentContainerStyle={[styles.routesContent, {
+          paddingHorizontal: containerPaddingHorizontal,
+        },]}
         horizontal={false}
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
@@ -116,7 +131,7 @@ export default function RoutesListScreen({ onSelectRoute }: RoutesListScreenProp
           />
         ))}
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -183,7 +198,7 @@ function RouteCard({
           {!!route.description && <Text style={styles.detailsText}>{route.description}</Text>}
 
           <TouchableOpacity style={styles.selectButton} onPress={onSelect} activeOpacity={0.9}>
-            <Text style={styles.selectButtonText}>Wybierz trasę</Text>
+            <Text style={styles.selectButtonText}>{t("chooseRoute")}</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -204,20 +219,19 @@ function InfoPill({ icon, value }: { icon: string; value: string }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 10 },
+  container: { flex: 1, backgroundColor: "transparent" },
 
   // Zakładki
   tabContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 100,
-    marginBottom: 20,
+    marginBottom: 20, // większy odstęp pod przyciskami (wcześniej 12)
     width: "100%",
     gap: 15,
   },
   tabButton: {
     flex: 1,
-    paddingVertical: 18,
+    paddingVertical: 16, // nieco więcej wysokości przycisku
     alignItems: "center",
     borderRadius: 12,
     paddingHorizontal: 2,
@@ -234,7 +248,7 @@ const styles = StyleSheet.create({
   tabTextActive: { color: THEME.text },
 
   // Lista tras
-  routesContainer: { flex: 1, marginTop: 30 },
+  routesContainer: { flex: 1, marginTop: 18 }, // przesunięto listę niżej (wcześniej 12)
   routesContent: { gap: 15, paddingBottom: 40 },
 
   // Karta trasy

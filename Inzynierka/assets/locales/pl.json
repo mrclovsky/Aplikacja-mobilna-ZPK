@@ -25,10 +25,21 @@
   "routePage": "Trasa",
   "start": "START", 
   "stop": "STOP",
+  "map": {
+    "none": "Brak",
+    "prefix": "M",
+    "map1": "Mapa 1",
+    "map2": "Mapa 2",
+    "map3": "Mapa 3",
+    "map4": "Mapa 4",
+    "map5": "Mapa 5",
+    "map6": "Mapa 6"
+  },
 
   "routesListPage": "Lista Tras",
   "myRoutes": "Moje",
   "recomendedRoutes": "Polecane",
+  "chooseRoute": "Wybierz trasę",
 
   "setQR": "Ustaw kod QR w ramce",
   "scanAgain": "Skanuj ponownie",

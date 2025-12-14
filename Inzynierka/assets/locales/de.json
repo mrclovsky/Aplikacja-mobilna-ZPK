@@ -25,10 +25,21 @@
   "routePage": "Route",
   "start": "START", 
   "stop": "STOPP",
+  "map": {
+    "none": "Keine",
+    "prefix": "K",
+    "map1": "Karte 1",
+    "map2": "Karte 2",
+    "map3": "Karte 3",
+    "map4": "Karte 4",
+    "map5": "Karte 5",
+    "map6": "Karte 6"
+  },
 
   "routesListPage": "Routenliste",
   "myRoutes": "Meine",
   "recomendedRoutes": "Empfohlen",
+  "chooseRoute": "Route wählen",
 
   "setQR": "QR-Code im Rahmen ausrichten",
   "scanAgain": "Erneut scannen",

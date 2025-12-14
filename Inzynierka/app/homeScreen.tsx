@@ -1,16 +1,4 @@
 // app/screens/homeScreen.tsx
-// Ekran główny aplikacji z dolną nawigacją. Renderuje jedną z czterech sekcji:
-// - Lista tras
-// - Mapa wybranej trasy
-// - Osiągnięcia
-// - Ustawienia
-//
-// Najważniejsze założenia:
-// - Struktura zakładek opisana w jednej tablicy konfiguracyjnej (bez duplikacji kodu).
-// - Zmiana języka i18n wymusza lokalny rerender (dla odświeżenia etykiet).
-// - Widok mapy pracuje w trybie pełnoekranowym (bez paddingu), pozostałe sekcje mają padding.
-// - Ikony w nawigacji: aktywna zakładka podkreślona kropką i pogrubionym podpisem.
-
 import React, { useEffect, useMemo, useState } from "react";
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -22,26 +10,34 @@ import MapScreen from "./components/mapScreen";
 import RoutesListScreen from "./components/routesListScreen";
 import SettingsScreen from "./components/settingsScreen";
 
-const backgroundImage = require("../assets/images/las.jpg");
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+const backgroundImage = require("../assets/images/las.jpg");
+  
 type TabKey = "routes" | "route" | "achievements" | "settings";
 
 const COLORS = {
-  navbarBg: "rgba(0, 77, 0, 0.8)",
+  navbarBg: "rgba(0, 77, 0, 0.85)",
   iconActive: "#000",
   iconInactive: "#fff",
   text: "#fff",
   dot: "#fff",
 };
 
+// W razie potrzeby dopasuj tę wysokość (w px)
+const NAVBAR_HEIGHT = 64;
+const NAVBAR_BOTTOM_OFFSET = 12;
+
 export default function HomeScreen() {
   const { t, i18n } = useTranslation();
+  const insets = useSafeAreaInsets();
 
-  // Aktualna zakładka oraz wybrana trasa do przekazania do MapScreen
+  const navbarTotalHeight =
+  NAVBAR_HEIGHT + (insets.bottom ?? 0) + NAVBAR_BOTTOM_OFFSET;
+
   const [activeTab, setActiveTab] = useState<TabKey>("routes");
   const [selectedRoute, setSelectedRoute] = useState<Route | null>(null);
 
-  // Tylko do wymuszenia rerenderu po zmianie języka (etkiety w navbarze)
   const [, setLangTick] = useState(0);
   useEffect(() => {
     const onLangChange = () => setLangTick((v) => v + 1);
@@ -49,40 +45,31 @@ export default function HomeScreen() {
     return () => i18n.off("languageChanged", onLangChange);
   }, [i18n]);
 
-  // Konfiguracja zakładek. Renderer jest funkcją, żeby odświeżał się przy zmianie stanu.
-  const tabs = useMemo<
-    Array<{
-      key: TabKey;
-      icon: string;
-      label: string;
-      fullScreen: boolean;
-      render: () => React.ReactNode;
-    }>
-  >(
+  const tabs = useMemo(
     () => [
       {
-        key: "routes",
+        key: "routes" as TabKey,
         icon: "list",
         label: t("routesListPage"),
         fullScreen: false,
         render: () => <RoutesListScreen onSelectRoute={setSelectedRoute} />,
       },
       {
-        key: "route",
+        key: "route" as TabKey,
         icon: "navigate",
         label: t("routePage"),
         fullScreen: true,
         render: () => <MapScreen selectedRoute={selectedRoute} />,
       },
       {
-        key: "achievements",
+        key: "achievements" as TabKey,
         icon: "trophy",
         label: t("achievementsPage"),
         fullScreen: false,
         render: () => <AchievementsScreen />,
       },
       {
-        key: "settings",
+        key: "settings" as TabKey,
         icon: "settings",
         label: t("settingsPage"),
         fullScreen: false,
@@ -94,15 +81,28 @@ export default function HomeScreen() {
 
   const current = tabs.find((t) => t.key === activeTab) ?? tabs[0];
   const Content = current.render;
+  const isFullScreen = current.fullScreen;
 
   return (
     <ImageBackground source={backgroundImage} style={styles.background} imageStyle={{ opacity: 0.5 }}>
       <View style={styles.container}>
-        <View style={current.fullScreen ? styles.fullScreenContent : styles.contentContainer}>
+        <View style={[styles.contentWrapper, 
+        !isFullScreen && { paddingBottom:
+        NAVBAR_HEIGHT + (insets.bottom ?? 0) + NAVBAR_BOTTOM_OFFSET, // ✅ IDEALNIE ZGODNE Z NAVBAREM
+      },]}>
           <Content />
         </View>
 
-        <View style={styles.navbar}>
+        {/* navbar jako absolutny overlay; bottom zależy od safe-area + offset */}
+        <View
+          style={[
+            styles.navbar,
+            {
+              height: NAVBAR_HEIGHT,
+              bottom: (insets.bottom ?? 0) + NAVBAR_BOTTOM_OFFSET,
+            },
+          ]}
+        >
           {tabs.map((tab) => (
             <NavItem
               key={tab.key}
@@ -118,7 +118,6 @@ export default function HomeScreen() {
   );
 }
 
-// Pojedynczy przycisk w dolnej nawigacji (ikona + etykieta + znacznik aktywności)
 function NavItem({
   icon,
   label,
@@ -132,8 +131,10 @@ function NavItem({
 }) {
   return (
     <TouchableOpacity style={styles.navItem} onPress={onPress} activeOpacity={0.8}>
-      <Ionicons name={icon} size={28} color={active ? COLORS.iconActive : COLORS.iconInactive} />
-      <Text style={[styles.navText, active && styles.navTextActive]}>{label}</Text>
+      <Ionicons name={icon} size={26} color={active ? COLORS.iconActive : COLORS.iconInactive} />
+      <Text style={[styles.navText, active && styles.navTextActive]} numberOfLines={1}>
+        {label}
+      </Text>
       {active && <View style={styles.activeDot} />}
     </TouchableOpacity>
   );
@@ -141,37 +142,27 @@ function NavItem({
 
 const styles = StyleSheet.create({
   background: { flex: 1 },
-  container: { flex: 1, justifyContent: "space-between" },
+  container: { flex: 1 },
 
-  // Układ dla treści ekranów nie-mapowych (z marginesem wewnętrznym)
-  contentContainer: {
+  contentWrapper: { 
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  // Układ pełnoekranowy dla mapy (bez paddingu, pełna szerokość)
-  fullScreenContent: {
-    flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "stretch",
-    padding: 0,
-    width: "100%",
   },
 
-  // Pasek nawigacji dolnej
   navbar: {
+    position: "absolute",
+    left: 12,
+    right: 12,
     flexDirection: "row",
     justifyContent: "space-around",
+    alignItems: "center",
     backgroundColor: COLORS.navbarBg,
-    paddingVertical: 10,
-    borderRadius: 20,
-    marginBottom: 40,
-    marginHorizontal: 10,
+    paddingHorizontal: 8,
+    borderRadius: 14,
+    zIndex: 200,
+    // nie ustawiamy paddingBottom = insets; używamy wysokości NAVBAR_HEIGHT
   },
 
-  // Element nawigacji
-  navItem: { justifyContent: "center", alignItems: "center" },
+  navItem: { justifyContent: "center", alignItems: "center", paddingHorizontal: 6, flex: 1 },
   navText: { color: COLORS.text, fontSize: 12, marginTop: 4 },
   navTextActive: { fontWeight: "700" },
   activeDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: COLORS.dot, marginTop: 4 },

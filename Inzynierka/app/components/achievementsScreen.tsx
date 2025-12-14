@@ -1,11 +1,6 @@
 // app/components/achievementsScreen.tsx
 // Lista osiągnięć z obsługą odczytu/zapisu do pliku, migracją brakujących ID,
 // sortowaniem po dacie i usuwaniem pozycji przez gest przesunięcia.
-// Warstwy:
-// - Trwałość: plik JSON w katalogu dokumentów (FILE).
-// - Migracja: nadanie brakujących ID i zapis z powrotem.
-// - Prezentacja: FlatList + Swipeable, animowane usuwanie.
-// - Animacje: Animated.Value per element, inicjalizowane na podstawie stanu.
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -23,6 +18,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { File, Paths } from "expo-file-system";
 import { Achievement } from "../../assets/types";
 import { t } from "i18next";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const THEME = {
   bgCard: "rgba(0,0,0,0.4)",
@@ -35,7 +31,12 @@ const THEME = {
 
 const FILE = new File(Paths.document, "achievementsData.json");
 
+const TOP_MARGIN = 8; // dodatkowy odstęp od notch/status bar
+
+
 export default function AchievementsScreen() {
+  const insets = useSafeAreaInsets();
+
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const swipeableRefs = useRef<Map<string, Swipeable>>(new Map());
   const animatedValues = useRef<Record<string, Animated.Value>>({});
@@ -165,18 +166,33 @@ export default function AchievementsScreen() {
     (item.id as string) ||
     `${item.date}|${item.name}|${item.time}|${item.length}|${item.points}|${item.maxPoints}`;
 
+  // Wyliczone style marginesów uwzględniające safe area i navbar
+  const containerPaddingTop = (insets.top ?? 0) + TOP_MARGIN;
+  const containerPaddingBottom = 0;
+  const containerPaddingHorizontal = Math.max(12, (insets.left ?? 0), (insets.right ?? 0));
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaView style={styles.safeContainer}>
+      <SafeAreaView
+        style={[
+          styles.safeContainer,
+          {
+            paddingTop: containerPaddingTop,
+            paddingBottom: 0,
+          },
+        ]}
+      >
         <FlatList
           data={achievements}
           keyExtractor={keyExtractor}
           renderItem={renderItem}
-          contentContainerStyle={styles.achievementsContainer}
+          contentContainerStyle={[styles.achievementsContainer, { 
+            paddingHorizontal: containerPaddingHorizontal, 
+            paddingBottom: 0, }]}
           showsVerticalScrollIndicator={false}
           initialNumToRender={8}
           windowSize={7}
-          removeClippedSubviews
+          removeClippedSubviews={false}
         />
       </SafeAreaView>
     </GestureHandlerRootView>
@@ -246,9 +262,9 @@ const styles = StyleSheet.create({
   safeContainer: { flex: 1, backgroundColor: "transparent" },
 
   achievementsContainer: {
-    paddingHorizontal: 10,
     paddingTop: 20,
     paddingBottom: 20,
+    // paddingHorizontal już ustawiamy dynamicznie przez SafeAreaView
   },
 
   achievementBox: {
