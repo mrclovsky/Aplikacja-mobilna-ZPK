@@ -20,10 +20,10 @@ import * as Location from "expo-location";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { router, useLocalSearchParams } from "expo-router";
 
-import routesData from "../../assets/data/routesData.json";
 import type { DataFile, Point, Route } from "../../assets/types";
 import { visitedStore } from "../stores/visitedPointsStore";
 import { t } from "i18next";
+import { useRoutesData } from "../hooks/useRoutesData";
 
 type Validation = "idle" | "success" | "error";
 type Phase = "idle" | "validating" | "done";
@@ -76,7 +76,8 @@ export default function QRScanScreen() {
   const { route: routeParam } = useLocalSearchParams<{ route?: string }>();
   const routeName = typeof routeParam === "string" && routeParam.trim() ? routeParam.trim() : undefined;
 
-  const data = routesData as DataFile;
+  // Get routes data from API/storage
+  const { data } = useRoutesData();
 
   // Mapa QR → punkt (fizyczne)
   const pointsByQr = useMemo(() => {

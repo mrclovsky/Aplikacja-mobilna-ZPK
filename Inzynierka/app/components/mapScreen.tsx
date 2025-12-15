@@ -3,7 +3,6 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import {StyleSheet, View } from "react-native";
 import MapView, {Region } from "react-native-maps";
 import { DataFile, Route } from "../../assets/types";
-import routesData from "../../assets/data/routesData.json";
 import { visitedStore } from "../stores/visitedPointsStore";
 import useProximityBanner from "../hooks/useProximityBanner";
 import useLiveLocation from "../hooks/useLiveLocation";
@@ -15,6 +14,7 @@ import MapControls from "./map/mapControls";
 import { createCameraController } from "./map/cameraController";
 import { createProximityChecker } from "./map/proximityChecker";
 import { t } from "i18next";
+import { useRoutesData } from "../hooks/useRoutesData";
 
 const NAVBAR_HEIGHT = 64;
 
@@ -65,6 +65,9 @@ export default function MapScreen({ selectedRoute }: MapScreenProps) {
 
   const [overlayIndex, setOverlayIndex] = useState<number>(0);
 
+  /* Get routes data from API/storage */
+  const { data: routesData } = useRoutesData();
+
   /* Pozostała logika bez zmian (lokalizacja, start/stop, UI...) */
 
   const {
@@ -73,7 +76,7 @@ export default function MapScreen({ selectedRoute }: MapScreenProps) {
     totalPoints,
     donePoints,
   } = useResolvedRoute({
-    data: routesData as DataFile,
+    data: routesData,
     selectedRoute,
     visitedIds,
   });

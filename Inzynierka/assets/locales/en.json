@@ -40,6 +40,9 @@
   "myRoutes": "Mine",
   "recomendedRoutes": "Recomended",
   "chooseRoute": "Choose route",
+  "refresh": "Refresh",
+  "refreshing": "Refreshing",
+  "loading": "Loading",
 
   "setQR": "Align the QR code in the frame",
   "scanAgain": "Scan again",

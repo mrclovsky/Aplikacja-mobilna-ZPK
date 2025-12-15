@@ -3,6 +3,7 @@
 
 import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import {
+  ActivityIndicator,
   LayoutAnimation,
   Platform,
   ScrollView,
@@ -17,9 +18,9 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import routesData from "../../assets/data/routesData.json";
 import type { DataFile, Route } from "../../assets/types";
 import { t } from "i18next";
+import { useRoutesData } from "../hooks/useRoutesData";
 
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -49,7 +50,9 @@ export default function RoutesListScreen({ onSelectRoute }: RoutesListScreenProp
   const [activeTab, setActiveTab] = useState<TabKey>("suggested");
   const [expandedRoutes, setExpandedRoutes] = useState<Record<string, boolean>>({});
 
-  const data = routesData as DataFile;
+  // Use the custom hook to manage routes data
+  const { data, isLoading, isRefreshing, error, refresh } = useRoutesData();
+  
   const suggestedRoutes = useMemo<Route[]>(() => data.suggestedRoutes ?? [], [data]);
   const myRoutes = useMemo<Route[]>(() => data.myRoutes ?? [], [data]);
 
@@ -85,6 +88,15 @@ export default function RoutesListScreen({ onSelectRoute }: RoutesListScreenProp
   const containerPaddingBottom = 0;
   const containerPaddingHorizontal = Math.max(12, (insets.left ?? 0), (insets.right ?? 0));
 
+  const handleRefresh = useCallback(async () => {
+    try {
+      await refresh();
+    } catch (err) {
+      // Error is already logged in the hook
+      console.log('Refresh failed, using cached data');
+    }
+  }, [refresh]);
+
   return (
     <SafeAreaView
       style={[
@@ -110,27 +122,62 @@ export default function RoutesListScreen({ onSelectRoute }: RoutesListScreenProp
         ))}
       </View>
 
+      {/* Loading indicator */}
+      {isLoading && (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={THEME.brand} />
+          <Text style={styles.loadingText}>{t("loading") || "Loading..."}</Text>
+        </View>
+      )}
+
+      {/* Error message */}
+      {error && !isLoading && (
+        <View style={styles.errorContainer}>
+          <Ionicons name="alert-circle" size={32} color="#ef4444" />
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      )}
+
       {/* Lista tras */}
-      <ScrollView
-        ref={scrollRef}
-        style={styles.routesContainer}
+      {!isLoading && (
+        <ScrollView
+          ref={scrollRef}
+          style={styles.routesContainer}
           contentContainerStyle={[styles.routesContent, {
-          paddingHorizontal: containerPaddingHorizontal,
-        },]}
-        horizontal={false}
-        showsVerticalScrollIndicator={false}
-        showsHorizontalScrollIndicator={false}
-      >
-        {routesToRender.map((route) => (
-          <RouteCard
-            key={route.name}
-            route={route}
-            expanded={!!expandedRoutes[route.name]}
-            onToggle={() => toggleDetails(route.name)}
-            onSelect={() => handleSelectRoute(route)}
-          />
-        ))}
-      </ScrollView>
+            paddingHorizontal: containerPaddingHorizontal,
+          }]}
+          horizontal={false}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+        >
+          {routesToRender.map((route) => (
+            <RouteCard
+              key={route.name}
+              route={route}
+              expanded={!!expandedRoutes[route.name]}
+              onToggle={() => toggleDetails(route.name)}
+              onSelect={() => handleSelectRoute(route)}
+            />
+          ))}
+
+          {/* Refresh Button */}
+          <TouchableOpacity
+            style={[styles.refreshButton, isRefreshing && styles.refreshButtonDisabled]}
+            onPress={handleRefresh}
+            disabled={isRefreshing}
+            activeOpacity={0.85}
+          >
+            {isRefreshing ? (
+              <ActivityIndicator size="small" color={THEME.text} />
+            ) : (
+              <Ionicons name="refresh" size={24} color={THEME.text} />
+            )}
+            <Text style={styles.refreshButtonText}>
+              {isRefreshing ? t("refreshing") || "Refreshing..." : t("refresh") || "Refresh"}
+            </Text>
+          </TouchableOpacity>
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 }
@@ -221,6 +268,31 @@ function InfoPill({ icon, value }: { icon: string; value: string }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "transparent" },
 
+  // Loading and error states
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 12,
+  },
+  loadingText: {
+    color: THEME.text,
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 12,
+    paddingHorizontal: 24,
+  },
+  errorText: {
+    color: THEME.text,
+    fontSize: 16,
+    textAlign: "center",
+  },
+
   // Zakładki
   tabContainer: {
     flexDirection: "row",
@@ -291,4 +363,29 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   selectButtonText: { color: THEME.text, fontWeight: "700", fontSize: 20 },
+
+  // Refresh button
+  refreshButton: {
+    backgroundColor: THEME.brand,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    marginTop: 20,
+    gap: 10,
+    shadowColor: THEME.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 4,
+  },
+  refreshButtonDisabled: {
+    opacity: 0.6,
+  },
+  refreshButtonText: {
+    color: THEME.text,
+    fontSize: 18,
+    fontWeight: "700",
+  },
 });

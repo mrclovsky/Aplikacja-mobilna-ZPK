@@ -40,6 +40,9 @@
   "myRoutes": "Meine",
   "recomendedRoutes": "Empfohlen",
   "chooseRoute": "Route wählen",
+  "refresh": "Aktualisieren",
+  "refreshing": "Aktualisierung",
+  "loading": "Laden",
 
   "setQR": "QR-Code im Rahmen ausrichten",
   "scanAgain": "Erneut scannen",

@@ -39,8 +39,9 @@
   "routesListPage": "Lista Tras",
   "myRoutes": "Moje",
   "recomendedRoutes": "Polecane",
-  "chooseRoute": "Wybierz trasę",
-
+  "chooseRoute": "Wybierz trasę",  "refresh": "Odśwież",
+  "refreshing": "Odświeżanie",
+  "loading": "Ładowanie",
   "setQR": "Ustaw kod QR w ramce",
   "scanAgain": "Skanuj ponownie",
   "openLink": "Otwórz link",

@@ -40,6 +40,9 @@
   "myRoutes": "Мої",
   "recomendedRoutes": "Рекомендовані",
   "chooseRoute": "Обрати маршрут",
+  "refresh": "Оновити",
+  "refreshing": "Оновлення",
+  "loading": "Завантаження",
 
   "setQR": "Вирівняйте QR-код у рамці",
   "scanAgain": "Сканувати ще раз",
