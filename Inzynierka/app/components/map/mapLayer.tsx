@@ -92,7 +92,7 @@ export default function MapLayer({
         <Image source={arrowImage} style={{ width: 35, height: 35 }} />
       </Marker>
 
-      {resolvedPoints.map((p) => {
+      {resolvedPoints.map((p, index) => {
         const isVisited = visitedIds.has(p.id);
 
         const markerImage =
@@ -110,7 +110,7 @@ export default function MapLayer({
 
         return (
           <Marker
-            key={p.id}
+            key={`${p.id}-${index}`}
             coordinate={{ latitude: p.lat, longitude: p.lng }}
             image={markerImage}         
             anchor={Platform.OS === "android"
