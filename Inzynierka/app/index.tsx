@@ -92,25 +92,15 @@ export default function WelcomeScreen() {
           {titleText}
         </Animated.Text>
 
-        {/* Akcje: logowanie i rejestracja */}
+        {/* Start button */}
         <TouchableOpacity
           style={styles.button}
-          onPress={() => router.push("/login")}
+          onPress={() => router.push("/homeScreen")}
           activeOpacity={0.9}
           accessibilityRole="button"
-          accessibilityLabel="Przejdź do logowania"
+          accessibilityLabel="Start application"
         >
-          <Text style={styles.buttonText}>{t("login")}</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.button, styles.buttonMargin]}
-          onPress={() => router.push("/register")}
-          activeOpacity={0.9}
-          accessibilityRole="button"
-          accessibilityLabel="Przejdź do rejestracji"
-        >
-          <Text style={styles.buttonText}>{t("register")}</Text>
+          <Text style={styles.buttonText}>{t("start")}</Text>
         </TouchableOpacity>
 
         {/* Wybór języka */}
