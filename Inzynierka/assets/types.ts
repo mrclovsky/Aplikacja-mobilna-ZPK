@@ -27,7 +27,7 @@ export interface DataFile {
   version: number;
   points: Point[];
   suggestedRoutes: Route[];
-  myRoutes: Route[];
+  myRoutes?: Route[];
 }
 
 // (zostawiamy Achievement, bo używasz go w innych miejscach)

@@ -26,8 +26,6 @@ if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-type TabKey = "suggested" | "mine";
-
 interface RoutesListScreenProps {
   onSelectRoute: (route: Route) => void;
 }
@@ -47,31 +45,14 @@ export default function RoutesListScreen({ onSelectRoute }: RoutesListScreenProp
   const scrollRef = useRef<ScrollView>(null);
   const insets = useSafeAreaInsets();
 
-  const [activeTab, setActiveTab] = useState<TabKey>("suggested");
   const [expandedRoutes, setExpandedRoutes] = useState<Record<string, boolean>>({});
 
   // Use the custom hook to manage routes data
   const { data, isLoading, isRefreshing, error, refresh } = useRoutesData();
   
-  const suggestedRoutes = useMemo<Route[]>(() => data.suggestedRoutes ?? [], [data]);
-  const myRoutes = useMemo<Route[]>(() => data.myRoutes ?? [], [data]);
+  const routesToRender = useMemo<Route[]>(() => data.suggestedRoutes ?? [], [data]);
 
-  // Konfiguracja zakładek: jedyne źródło prawdy dla etykiet i danych.
-  const tabs = useMemo(
-    () => [
-      { key: "suggested" as const, label: t("recomendedRoutes"), routes: suggestedRoutes },
-      { key: "mine" as const, label: t("myRoutes"), routes: myRoutes },
-    ],
-    [t, suggestedRoutes, myRoutes]
-  );
-
-  const currentTab = tabs.find((tab) => tab.key === activeTab) ?? tabs[0];
-  const routesToRender = currentTab.routes;
-
-  // Przewinięcie listy na górę po zmianie zakładki.
-  useEffect(() => {
-    scrollRef.current?.scrollTo({ y: 0, animated: true });
-  }, [activeTab]);
+  // Removed tab switching - no longer needed
 
   // Animowane rozwijanie/zwijanie szczegółów.
   const toggleDetails = useCallback((routeName: string) => {
@@ -108,20 +89,6 @@ export default function RoutesListScreen({ onSelectRoute }: RoutesListScreenProp
         },
       ]}
     >
-      {/* Pasek zakładek */}
-      <View style={[styles.tabContainer,{
-        paddingHorizontal: containerPaddingHorizontal, // ✅ WYRÓWNANIE Z LISTĄ
-          },]}>
-        {tabs.map((tab) => (
-          <TabButton
-            key={tab.key}
-            label={tab.label}
-            active={tab.key === activeTab}
-            onPress={() => setActiveTab(tab.key)}
-          />
-        ))}
-      </View>
-
       {/* Loading indicator */}
       {isLoading && (
         <View style={styles.loadingContainer}>
@@ -179,32 +146,6 @@ export default function RoutesListScreen({ onSelectRoute }: RoutesListScreenProp
         </ScrollView>
       )}
     </SafeAreaView>
-  );
-}
-
-/**
- * Przycisk zakładki z wyróżnieniem aktywnego stanu.
- */
-function TabButton({
-  label,
-  active,
-  onPress,
-}: {
-  label: string;
-  active: boolean;
-  onPress: () => void;
-}) {
-  return (
-    <TouchableOpacity
-      style={[styles.tabButton, active ? styles.tabButtonActive : styles.tabButtonInactive]}
-      onPress={onPress}
-      disabled={active}
-      activeOpacity={0.85}
-      accessibilityRole="button"
-      accessibilityState={{ selected: active }}
-    >
-      <Text style={[styles.tabText, active && styles.tabTextActive]}>{label}</Text>
-    </TouchableOpacity>
   );
 }
 
@@ -293,34 +234,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-  // Zakładki
-  tabContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 20, // większy odstęp pod przyciskami (wcześniej 12)
-    width: "100%",
-    gap: 15,
-  },
-  tabButton: {
-    flex: 1,
-    paddingVertical: 16, // nieco więcej wysokości przycisku
-    alignItems: "center",
-    borderRadius: 12,
-    paddingHorizontal: 2,
-  },
-  tabButtonActive: { backgroundColor: THEME.brand },
-  tabButtonInactive: {
-    backgroundColor: THEME.cardBg,
-    shadowColor: THEME.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 4,
-  },
-  tabText: { fontWeight: "600", fontSize: 18, color: THEME.textMuted },
-  tabTextActive: { color: THEME.text },
-
   // Lista tras
-  routesContainer: { flex: 1, marginTop: 18 }, // przesunięto listę niżej (wcześniej 12)
+  routesContainer: { flex: 1, marginTop: 18 },
   routesContent: { gap: 15, paddingBottom: 40 },
 
   // Karta trasy

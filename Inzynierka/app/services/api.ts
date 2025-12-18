@@ -12,7 +12,6 @@ interface PointsResponse {
 
 interface PathsResponse {
   suggestedRoutes: Route[];
-  myRoutes: Route[];
 }
 
 export class ApiError extends Error {
@@ -83,7 +82,7 @@ export const apiService = {
       const data: PathsResponse = await response.json();
       return {
         suggestedRoutes: data.suggestedRoutes,
-        myRoutes: data.myRoutes,
+        myRoutes: [],
       };
     } catch (error) {
       if (error instanceof Error) {
