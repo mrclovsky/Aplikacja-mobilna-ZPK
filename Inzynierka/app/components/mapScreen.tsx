@@ -15,6 +15,7 @@ import { createCameraController } from "./map/cameraController";
 import { createProximityChecker } from "./map/proximityChecker";
 import { t } from "i18next";
 import { useRoutesData } from "../hooks/useRoutesData";
+import { useAppSettings } from "../hooks/useAppSettings";
 
 const NAVBAR_HEIGHT = 64;
 
@@ -67,6 +68,9 @@ export default function MapScreen({ selectedRoute }: MapScreenProps) {
 
   /* Get routes data from API/storage */
   const { data: routesData } = useRoutesData();
+  
+  /* Get distance setting */
+  const { distanceToPoint } = useAppSettings();
 
   /* Pozostała logika bez zmian (lokalizacja, start/stop, UI...) */
 
@@ -152,6 +156,7 @@ export default function MapScreen({ selectedRoute }: MapScreenProps) {
     stopTracking,
     setTrackingMode,
     clearMessage,
+    distanceToPoint,
   });
 
   const toggleTrackingMode = async () => {

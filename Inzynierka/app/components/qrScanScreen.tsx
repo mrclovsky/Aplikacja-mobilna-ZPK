@@ -24,6 +24,7 @@ import type { DataFile, Point, Route } from "../../assets/types";
 import { visitedStore } from "../stores/visitedPointsStore";
 import { t } from "i18next";
 import { useRoutesData } from "../hooks/useRoutesData";
+import { useAppSettings } from "../hooks/useAppSettings";
 
 type Validation = "idle" | "success" | "error";
 type Phase = "idle" | "validating" | "done";
@@ -78,6 +79,9 @@ export default function QRScanScreen() {
 
   // Get routes data from API/storage
   const { data } = useRoutesData();
+  
+  // Get distance setting
+  const { distanceToPoint } = useAppSettings();
 
   // Mapa QR → punkt (fizyczne)
   const pointsByQr = useMemo(() => {
@@ -305,7 +309,7 @@ const keyMap: Record<MessageKey, string> = {
             const loc = await getFreshPosition();
             if (myToken !== scanTokenRef.current) return; // przerwane resetem
             const dist = distanceMeters(loc.coords.latitude, loc.coords.longitude, point.lat, point.lng);
-            const radius = typeof point.radius === "number" ? point.radius : 20;
+            const radius = distanceToPoint;
 
             if (dist > radius) {
               nextValidation = "error";

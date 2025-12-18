@@ -25,6 +25,7 @@ export type ProximityChecker = {
     lng: number;
     points: Point[];
     routeName?: string;
+    distanceToPoint?: number; // Optional distance override from settings
   }): void;
 };
 
@@ -50,13 +51,13 @@ export function createProximityChecker(cb: ProximityCallbacks): ProximityChecker
     shownPhysical.clear();
   };
 
-  const check: ProximityChecker["check"] = ({ lat, lng, points, routeName }) => {
+  const check: ProximityChecker["check"] = ({ lat, lng, points, routeName, distanceToPoint = 10 }) => {
     let anyInRange = false;
 
     for (const p of points) {
       const d = distanceMeters(lat, lng, p.lat, p.lng);
-      // Utrzymujemy dotychczasową logikę: porównanie wprost do p.radius
-      if (d <= p.radius) {
+      // Use distanceToPoint from settings instead of p.radius
+      if (d <= distanceToPoint) {
         anyInRange = true;
         const alreadyVisited = visitedStore.has(routeName, p.id);
 

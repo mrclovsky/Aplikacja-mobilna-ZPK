@@ -19,6 +19,7 @@ export type ProximityCheckerLike = {
     lng: number;
     points: Point[];
     routeName: string;
+    distanceToPoint?: number;
   }) => void;
 };
 
@@ -39,6 +40,7 @@ export type UseNavigationControllerParams = {
   stopTracking: () => void;
   setTrackingMode: (v: boolean) => void;
   clearMessage: () => void;
+  distanceToPoint: number;
 };
 
 /**
@@ -64,6 +66,7 @@ export function useNavigationController({
   stopTracking,
   setTrackingMode,
   clearMessage,
+  distanceToPoint,
 }: UseNavigationControllerParams) {
   const [navigationActive, setNavigationActive] = useState(false);
 
@@ -94,6 +97,7 @@ export function useNavigationController({
           lng,
           points: resolvedPoints,
           routeName: selectedRoute.name,
+          distanceToPoint,
         });
       },
       onHeading: (trueHeading) => {

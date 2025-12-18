@@ -197,7 +197,7 @@ export const apiService = {
     } catch (error) {
       console.error('Error getting app settings:', error);
       // Return default value on error
-      return { distance_to_point: 10 };
+      return { distance_to_point: 20 };
     }
   },
 };
