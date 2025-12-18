@@ -16,6 +16,8 @@
   "settingsPage": "Налаштування",
   "logoutButton": "Вийти",
   "backToStart": "Повернутися на початок",
+  "distanceToPoint": "Відстань до точки",
+  "distanceNote": "Це зараховується, якщо GPS показує, що ви знаходитесь у межах {{distance}} метрів від точки.",
 
   "achievementsPage": "Досягнення",
   "deleteAchievement": "Видалити досягнення",

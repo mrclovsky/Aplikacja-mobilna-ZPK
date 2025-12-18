@@ -141,4 +141,63 @@ export const apiService = {
       return routesDataFallback as DataFile;
     }
   },
+
+  /**
+   * Fetch app settings from API
+   */
+  async fetchSettings(): Promise<{ distance_to_point: number }> {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT);
+
+      const response = await fetch(getFullUrl(API_CONFIG.ENDPOINTS.SETTINGS), {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new ApiError(`Failed to fetch settings: ${response.statusText}`, response.status);
+      }
+
+      const data = await response.json();
+      
+      // Save to storage
+      await storageService.saveAppSettings(data);
+      
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          throw new ApiError('Request timeout');
+        }
+        throw new ApiError(`Failed to fetch settings: ${error.message}`);
+      }
+      throw error;
+    }
+  },
+
+  /**
+   * Get app settings - tries storage first, then API
+   */
+  async getAppSettings(): Promise<{ distance_to_point: number }> {
+    try {
+      // Try storage first
+      const storedSettings = await storageService.getAppSettings();
+      if (storedSettings) {
+        return storedSettings;
+      }
+
+      // If no stored settings, fetch from API
+      return await this.fetchSettings();
+    } catch (error) {
+      console.error('Error getting app settings:', error);
+      // Return default value on error
+      return { distance_to_point: 10 };
+    }
+  },
 };

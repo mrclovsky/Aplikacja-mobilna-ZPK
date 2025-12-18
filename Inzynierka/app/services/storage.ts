@@ -7,6 +7,8 @@ import { DataFile } from '../../assets/types';
 const STORAGE_KEYS = {
   ROUTES_DATA: '@routes_data',
   LAST_UPDATE: '@routes_data_last_update',
+  APP_SETTINGS: '@app_settings',
+  SETTINGS_LAST_UPDATE: '@settings_last_update',
 };
 
 export const storageService = {
@@ -60,6 +62,34 @@ export const storageService = {
     } catch (error) {
       console.error('Error clearing routes data:', error);
       throw error;
+    }
+  },
+
+  /**
+   * Save app settings to local storage
+   */
+  async saveAppSettings(settings: { distance_to_point: number }): Promise<void> {
+    try {
+      const jsonData = JSON.stringify(settings);
+      await AsyncStorage.setItem(STORAGE_KEYS.APP_SETTINGS, jsonData);
+      await AsyncStorage.setItem(STORAGE_KEYS.SETTINGS_LAST_UPDATE, new Date().toISOString());
+    } catch (error) {
+      console.error('Error saving app settings:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get app settings from local storage
+   */
+  async getAppSettings(): Promise<{ distance_to_point: number } | null> {
+    try {
+      const jsonData = await AsyncStorage.getItem(STORAGE_KEYS.APP_SETTINGS);
+      if (!jsonData) return null;
+      return JSON.parse(jsonData);
+    } catch (error) {
+      console.error('Error getting app settings:', error);
+      return null;
     }
   },
 };

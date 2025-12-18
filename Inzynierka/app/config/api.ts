@@ -6,6 +6,7 @@ export const API_CONFIG = {
   ENDPOINTS: {
     POINTS: "/app/points",
     PATHS: "/app/paths",
+    SETTINGS: "/app/settings",
   },
   TIMEOUT: 10000, // 10 seconds
 };

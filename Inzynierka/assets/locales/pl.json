@@ -16,6 +16,8 @@
   "settingsPage": "Ustawienia",
   "logoutButton": "Wyloguj",
   "backToStart": "Powrót do startu",
+  "distanceToPoint": "Odległość do punktu",
+  "distanceNote": "Zalicza się, jeśli GPS pokaże, że jesteś w odległości {{distance}} metrów od punktu.",
 
   "achievementsPage": "Osiągniecia",
   "deleteAchievement": "Usuń osiągnięcie",

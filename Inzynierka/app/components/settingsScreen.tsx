@@ -6,11 +6,12 @@
 // - Wylogowanie poprzez przejście do "/" (expo-router).
 // - Prosty, przewidywalny UI bez duplikacji kodu (wspólny komponent przycisku językowego).
 
-import React, { useCallback, memo } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useCallback, memo, useState, useEffect } from "react";
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "expo-router";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { apiService } from "../services/api";
 
 const THEME = {
   brand: "#004d00",
@@ -28,6 +29,39 @@ export default function SettingsScreen() {
   // W tej wersji nazwa użytkownika jest stałą.
   // W razie integracji z backendem można ją pobrać z kontekstu/autoryzacji.
   const username = "Jan Kowalski";
+
+  const [distanceToPoint, setDistanceToPoint] = useState<number>(10);
+  const [isLoadingDistance, setIsLoadingDistance] = useState(true);
+  const [isRefreshingDistance, setIsRefreshingDistance] = useState(false);
+
+  // Load distance setting on mount
+  useEffect(() => {
+    loadDistanceSetting();
+  }, []);
+
+  const loadDistanceSetting = async () => {
+    try {
+      setIsLoadingDistance(true);
+      const settings = await apiService.getAppSettings();
+      setDistanceToPoint(settings.distance_to_point);
+    } catch (error) {
+      console.error('Error loading distance setting:', error);
+    } finally {
+      setIsLoadingDistance(false);
+    }
+  };
+
+  const handleRefreshDistance = useCallback(async () => {
+    try {
+      setIsRefreshingDistance(true);
+      const settings = await apiService.fetchSettings();
+      setDistanceToPoint(settings.distance_to_point);
+    } catch (error) {
+      console.error('Error refreshing distance setting:', error);
+    } finally {
+      setIsRefreshingDistance(false);
+    }
+  }, []);
 
   const handleBackToStart = useCallback(() => {
     router.push("/");
@@ -56,6 +90,35 @@ export default function SettingsScreen() {
             onPress={handleChangeLanguage(lng)}
           />
         ))}
+      </View>
+
+      {/* Distance to point setting */}
+      <View style={styles.distanceContainer}>
+        <View style={styles.distanceHeader}>
+          <Text style={styles.distanceLabel}>{t("distanceToPoint")}</Text>
+          <TouchableOpacity
+            onPress={handleRefreshDistance}
+            disabled={isRefreshingDistance}
+            style={styles.refreshButton}
+            activeOpacity={0.7}
+          >
+            {isRefreshingDistance ? (
+              <ActivityIndicator size="small" color={THEME.brand} />
+            ) : (
+              <Ionicons name="refresh" size={24} color={THEME.brand} />
+            )}
+          </TouchableOpacity>
+        </View>
+        {isLoadingDistance ? (
+          <ActivityIndicator size="small" color={THEME.brand} style={styles.distanceLoader} />
+        ) : (
+          <>
+            <Text style={styles.distanceValue}>{distanceToPoint} m</Text>
+            <Text style={styles.distanceNote}>
+              {t("distanceNote", { distance: distanceToPoint })}
+            </Text>
+          </>
+        )}
       </View>
 
       {/* Back to start */}
@@ -131,6 +194,51 @@ const styles = StyleSheet.create({
   langText: {
     color: THEME.text,
     fontWeight: "600",
+  },
+
+  // Distance to point section
+  distanceContainer: {
+    width: "100%",
+    backgroundColor: THEME.chipBg,
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 20,
+    alignItems: "center",
+  },
+  distanceHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 8,
+    width: "100%",
+  },
+  distanceLabel: {
+    fontSize: 18,
+    color: THEME.text,
+    fontWeight: "bold",
+    flex: 1,
+    textAlign: "center",
+  },
+  refreshButton: {
+    padding: 4,
+    position: "absolute",
+    right: 0,
+  },
+  distanceLoader: {
+    marginVertical: 10,
+  },
+  distanceValue: {
+    fontSize: 32,
+    color: THEME.brand,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+  distanceNote: {
+    fontSize: 12,
+    color: THEME.text,
+    textAlign: "center",
+    opacity: 0.8,
+    paddingHorizontal: 10,
   },
 
   // Przycisk wylogowania
