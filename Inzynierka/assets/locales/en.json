@@ -15,6 +15,7 @@
 
   "settingsPage": "Settings",
   "logoutButton": "Logout",
+  "backToStart": "Back to start",
 
   "achievementsPage": "Achievements",
   "deleteAchievement": "Delete achievement",

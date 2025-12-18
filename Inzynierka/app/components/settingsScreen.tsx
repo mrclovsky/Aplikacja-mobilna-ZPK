@@ -29,7 +29,7 @@ export default function SettingsScreen() {
   // W razie integracji z backendem można ją pobrać z kontekstu/autoryzacji.
   const username = "Jan Kowalski";
 
-  const handleLogout = useCallback(() => {
+  const handleBackToStart = useCallback(() => {
     router.push("/");
   }, [router]);
 
@@ -58,9 +58,9 @@ export default function SettingsScreen() {
         ))}
       </View>
 
-      {/* Wylogowanie */}
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout} activeOpacity={0.85}>
-        <Text style={styles.logoutButtonText}>{t("logoutButton")}</Text>
+      {/* Back to start */}
+      <TouchableOpacity style={styles.logoutButton} onPress={handleBackToStart} activeOpacity={0.85}>
+        <Text style={styles.logoutButtonText}>{t("backToStart")}</Text>
       </TouchableOpacity>
     </View>
   );
