@@ -26,10 +26,6 @@ export default function SettingsScreen() {
   const router = useRouter();
   const { t, i18n } = useTranslation();
 
-  // W tej wersji nazwa użytkownika jest stałą.
-  // W razie integracji z backendem można ją pobrać z kontekstu/autoryzacji.
-  const username = "Jan Kowalski";
-
   const [distanceToPoint, setDistanceToPoint] = useState<number>(10);
   const [isLoadingDistance, setIsLoadingDistance] = useState(true);
   const [isRefreshingDistance, setIsRefreshingDistance] = useState(false);
@@ -74,12 +70,6 @@ export default function SettingsScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Ikona użytkownika */}
-      <Ionicons name="person-circle" size={100} color={THEME.brand} style={styles.userIcon} />
-
-      {/* Nazwa użytkownika */}
-      <Text style={styles.username}>{username}</Text>
-
       {/* Wybór języka */}
       <View style={styles.langContainer}>
         {LANGS.map((lng) => (
@@ -163,17 +153,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flex: 1,
     padding: 20,
-  },
-
-  // Nagłówek użytkownika
-  userIcon: {
-    marginBottom: 10,
-  },
-  username: {
-    fontSize: 22,
-    color: THEME.text,
-    fontWeight: "bold",
-    marginBottom: 20,
   },
 
   // Pasek wyboru języka
