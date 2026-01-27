@@ -1,10 +1,3 @@
-// app/_layout.tsx
-// Główny układ nawigacji oparty o expo-router Stack i i18next.
-// Założenia:
-// - I18nextProvider obejmuje cały stos ekranów.
-// - Wspólne opcje nagłówka dla ekranów logowania/rejestracji zdefiniowane w screenOptions.
-// - Ekrany index, homeScreen oraz komponent skanera QR mają wyłączony nagłówek.
-
 import React from "react";
 import { Stack } from "expo-router";
 import { I18nextProvider, useTranslation } from "react-i18next";
@@ -18,14 +11,12 @@ export default function RootLayout() {
   );
 }
 
-// Odseparowany stos, aby mieć dostęp do t() już wewnątrz providera.
 function StackWithI18n() {
   const { t } = useTranslation();
   const backTitle = t("home") || "Strona główna";
 
   return (
     <Stack
-      // Wspólne opcje nagłówków dla ekranów, które go wyświetlają (login/register)
       screenOptions={{
         headerTransparent: true,
         headerTintColor: "#fff",
@@ -33,10 +24,8 @@ function StackWithI18n() {
         headerShadowVisible: false,
       }}
     >
-      {/* Ekran powitalny */}
       <Stack.Screen name="index" options={{ headerShown: false }} />
 
-      {/* Logowanie */}
       <Stack.Screen
         name="login"
         options={{
@@ -44,7 +33,6 @@ function StackWithI18n() {
         }}
       />
 
-      {/* Rejestracja */}
       <Stack.Screen
         name="register"
         options={{
@@ -53,10 +41,7 @@ function StackWithI18n() {
         }}
       />
 
-      {/* Główny ekran aplikacji */}
       <Stack.Screen name="homeScreen" options={{ headerShown: false }} />
-
-      {/* Skaner QR */}
       <Stack.Screen name="components/qrScanScreen" options={{ headerShown: false }} />
     </Stack>
   );

@@ -1,7 +1,3 @@
-// app/components/achievementsScreen.tsx
-// Lista osiągnięć z obsługą odczytu/zapisu do pliku, migracją brakujących ID,
-// sortowaniem po dacie i usuwaniem pozycji przez gest przesunięcia.
-
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
@@ -31,7 +27,7 @@ const THEME = {
 
 const FILE = new File(Paths.document, "achievementsData.json");
 
-const TOP_MARGIN = 8; // dodatkowy odstęp od notch/status bar
+const TOP_MARGIN = 8;
 
 
 export default function AchievementsScreen() {
@@ -41,7 +37,6 @@ export default function AchievementsScreen() {
   const swipeableRefs = useRef<Map<string, Swipeable>>(new Map());
   const animatedValues = useRef<Record<string, Animated.Value>>({});
 
-  // Ładowanie: utworzenie pliku gdy nie istnieje, migracja ID, sortowanie i zapis.
   useEffect(() => {
     (async () => {
       try {
@@ -78,7 +73,6 @@ export default function AchievementsScreen() {
     })();
   }, []);
 
-  // Inicjalizacja Animated.Value dla każdego elementu obecnego w stanie.
   useEffect(() => {
     achievements.forEach((a) => {
       const key = a.id as string;
@@ -88,7 +82,6 @@ export default function AchievementsScreen() {
     });
   }, [achievements]);
 
-  // Potwierdzenie i animowane usuwanie.
   const requestDelete = (id: string) => {
     const index = achievements.findIndex((a) => a.id === id);
     if (index === -1) return;
@@ -119,7 +112,6 @@ export default function AchievementsScreen() {
     }
   };
 
-  // Prawa akcja swipe (usuń).
   const renderRightActions = (id: string) => (
     <TouchableOpacity
       style={styles.deleteButton}
@@ -133,12 +125,10 @@ export default function AchievementsScreen() {
     </TouchableOpacity>
   );
 
-  // Pojedynczy element listy.
   const renderItem = ({ item }: { item: Achievement }) => {
     const id = item.id as string;
     const anim = animatedValues.current[id] ?? new Animated.Value(1);
 
-    // POPRAWKA: prawidłowe skalowanie — outputRange jako liczby i przypięcie pod klucz 'scale'.
     const scale = anim.interpolate({ inputRange: [0, 1], outputRange: [0.8, 1] });
 
     return (
@@ -166,7 +156,6 @@ export default function AchievementsScreen() {
     (item.id as string) ||
     `${item.date}|${item.name}|${item.time}|${item.length}|${item.points}|${item.maxPoints}`;
 
-  // Wyliczone style marginesów uwzględniające safe area i navbar
   const containerPaddingTop = (insets.top ?? 0) + TOP_MARGIN;
   const containerPaddingBottom = 0;
   const containerPaddingHorizontal = Math.max(12, (insets.left ?? 0), (insets.right ?? 0));
@@ -199,9 +188,6 @@ export default function AchievementsScreen() {
   );
 }
 
-/**
- * Karta osiągnięcia: nagłówek (ikona, nazwa, data) i trzy pola informacyjne.
- */
 function AchievementCard({ item }: { item: Achievement }) {
   const lengthFormatted = useMemo(
     () =>
@@ -229,9 +215,6 @@ function AchievementCard({ item }: { item: Achievement }) {
   );
 }
 
-/**
- * Uniwersalny boks z ikoną i wartością tekstową.
- */
 function InfoBox({ icon, value }: { icon: string; value: string }) {
   return (
     <View style={styles.infoBox}>
@@ -240,8 +223,6 @@ function InfoBox({ icon, value }: { icon: string; value: string }) {
     </View>
   );
 }
-
-/* ===== Pomocnicze ===== */
 
 const makeId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
@@ -252,11 +233,9 @@ const persist = async (updated: Achievement[]) => {
   try {
     FILE.write(JSON.stringify({ achievements: updated }, null, 2), { encoding: "utf8" });
   } catch (err) {
-    console.error("Błąd zapisu achievements:", err);
+    console.error("Błąd zapisu osiągnięcia:", err);
   }
 };
-
-/* ===== Style ===== */
 
 const styles = StyleSheet.create({
   safeContainer: { flex: 1, backgroundColor: "transparent" },
@@ -264,7 +243,6 @@ const styles = StyleSheet.create({
   achievementsContainer: {
     paddingTop: 20,
     paddingBottom: 20,
-    // paddingHorizontal już ustawiamy dynamicznie przez SafeAreaView
   },
 
   achievementBox: {

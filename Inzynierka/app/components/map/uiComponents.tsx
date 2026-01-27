@@ -1,4 +1,3 @@
-// app/components/map/uiComponents.tsx
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -9,7 +8,6 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-/** Stałe **/
 const MAP_BUTTON_WIDTH = 100;
 const MAP_BUTTON_HEIGHT = 40;
 
@@ -29,7 +27,6 @@ export function ProximityBanner({ text }: { text: string }) {
   );
 }
 
-/** Start/Stop (środek wrappera) **/
 export function StartStopButton({
   navigationActive,
   canStart,
@@ -62,7 +59,6 @@ export function StartStopButton({
   );
 }
 
-/** ToggleTrackingButton - lewy (pod MapSelect) **/
 export function ToggleTrackingButton({
   tracking,
   onPress,
@@ -87,7 +83,6 @@ export function ToggleTrackingButton({
   );
 }
 
-/** ScanQRButton - prawy **/
 export function ScanQRButton({ onPress }: { onPress: () => void }) {
   return (
     <TouchableOpacity style={[styles.uiButtonBase]} onPress={onPress}>
@@ -96,7 +91,6 @@ export function ScanQRButton({ onPress }: { onPress: () => void }) {
   );
 }
 
-/** HUD counters **/
 export function HudCounters({
   elapsed,
   points,
@@ -134,7 +128,7 @@ export function MapSelectButton({
 }: {
   selectedIndex: number;
   onSelect: (index: number) => void;
-  entries: string[]; // entries[0] = 'Brak'
+  entries: string[];
   navigationActive: boolean;
   labels?: { none: string; mapPrefix?: string };
 }) {
@@ -158,13 +152,11 @@ export function MapSelectButton({
   const entriesReversed = entries.slice().reverse();
   const label = selectedIndex === 0 ? labels.none : `${labels.mapPrefix ?? "M"}${selectedIndex}`;
 
-  // raise przy navigationActive (delikatne uniesienie nad Toggle)
   const raiseOnNav = anim.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, -45], // -10px uniesienia — dostosuj jeśli chcesz mniej/więcej
+    outputRange: [0, -45],
   });
 
-  // lista otwiera się w górę — liczymy translację w górę o wysokość listy
   const LIST_GAP = 6;
 
   const listOffset = useRef(new Animated.Value(open ? 1 : 0)).current;
@@ -179,7 +171,6 @@ export function MapSelectButton({
 
   return (
     <>
-      {/* Lista: pozycjonowana względem osi środka wrappera i przesuwana WYŻEJ (ujemne translateY) */}
       {open && (
         <Animated.View
           style={[
@@ -214,8 +205,6 @@ export function MapSelectButton({
         </Animated.View>
       )}
 
-      {/* Przycisk: umieszczony dokładnie na tej samej osi Y co ToggleTracking (top:'50%' + translateY(-h/2)), 
-          oraz animacja podnoszenia przy navigationActive */}
       <Animated.View
         style={[
           styles.mapSelectButtonWrapper,
@@ -244,9 +233,7 @@ export function MapSelectButton({
   );
 }
 
-/* ===== Style ===== */
 const styles = StyleSheet.create({
-  // Start/Stop
   startButton: {
     height: MAP_BUTTON_HEIGHT,
     minWidth: MAP_BUTTON_WIDTH + 32, 
@@ -284,13 +271,12 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
 
-  // ToggleTracking — lewy, wyrównany do środka wrappera
   toggleButton: {
     paddingHorizontal: 8,
   },
 
   mapSelectButtonInner: {
-    paddingHorizontal: 8, // tylko to, czego NIE ma w bazie
+    paddingHorizontal: 8,
   },
 
   mapSelectButtonWrapper: {
@@ -314,7 +300,6 @@ const styles = StyleSheet.create({
     textAlign: "left",
   },
 
-  // Lista pojawiająca się NAD przyciskiem
   mapSelectListContainer: {
     position: "absolute",
     width: MAP_BUTTON_WIDTH,
@@ -344,7 +329,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 
-  // HUD counters (bez zmian)
   timerContainerRight: {
     position: "absolute",
     top: 60,
@@ -383,7 +367,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 
-  // Banery
   routeNameContainer: {
     position: "absolute",
     top: 60,

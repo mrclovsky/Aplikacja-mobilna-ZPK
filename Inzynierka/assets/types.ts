@@ -3,23 +3,23 @@ export type PointType = "physical" | "virtual";
 export interface Point {
   id: string;
   type: PointType;
-  radius: number;   // metry
+  radius: number;
   lat: number;
   lng: number;
-  qr?: string;      // tylko dla physical
+  qr?: string;
 }
 
 export interface PointRef {
   pointId: string;
-  order?: number;           // opcjonalna kolejność w trasie
-  radiusOverride?: number;  // opcjonalne nadpisanie promienia dla tej trasy
+  order?: number;
+  radiusOverride?: number;
 }
 
 export interface Route {
-  name: string;             // pełni rolę ID trasy
+  name: string;
   description?: string;
   lengthKm?: number;
-  defaultPoints?: number;   // informacyjne
+  defaultPoints?: number;
   pointRefs: PointRef[];
 }
 
@@ -30,7 +30,6 @@ export interface DataFile {
   myRoutes?: Route[];
 }
 
-// (zostawiamy Achievement, bo używasz go w innych miejscach)
 export interface Achievement {
   id: string;
   name: string;

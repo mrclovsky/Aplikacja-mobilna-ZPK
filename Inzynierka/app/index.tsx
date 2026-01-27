@@ -1,10 +1,3 @@
-// app/index.tsx
-// Ekran powitalny z animowanym komunikatem, wyborem języka oraz przyciskami logowania/rejestracji.
-// Założenia:
-// - Komunikat rotuje cyklicznie co INTERVAL_MS z animacją wyjazdu i wjazdu.
-// - Zmiana języka natychmiast aktualizuje widoczną treść bez naruszania cyklu.
-// - Przyciski kierują do ścieżek /login oraz /register (expo-router).
-
 import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { Animated, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
@@ -20,26 +13,21 @@ const THEME = {
 const LANGS = ["pl", "en", "ua", "de"] as const;
 
 const ANIM = {
-  offset: 50,     // piksele przesunięcia Y przy animacji
-  duration: 500,  // czas animacji jednego etapu
-  interval: 5000, // co ile zmieniamy greeting
+  offset: 50,
+  duration: 500,
+  interval: 5000, 
 };
 
 export default function WelcomeScreen() {
   const router = useRouter();
   const { t, i18n } = useTranslation();
-
-  // Powitania budowane przez i18n; gdy klucza brak, t() zwróci wejściowy tekst (jak w oryginale).
   const GREETING_SOURCES = ["Witaj!", "Hello!", "Привіт!", "Hallo!"];
   const greetings = useMemo(() => GREETING_SOURCES.map((g) => t(g)), [i18n.language, t]);
-
   const [index, setIndex] = useState(0);
   const [titleText, setTitleText] = useState(greetings[0]);
-
   const slideAnim = useRef(new Animated.Value(0)).current;
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Pojedyncza sekwencja: wyjazd w górę → podmiana tekstu → wjazd od dołu.
   const animateOnce = useCallback(
     (nextText: string) => {
       Animated.timing(slideAnim, {
@@ -59,7 +47,6 @@ export default function WelcomeScreen() {
     [slideAnim]
   );
 
-  // Uruchom cykliczną rotację tekstu na stałym interwale.
   useEffect(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
 
@@ -75,10 +62,8 @@ export default function WelcomeScreen() {
       if (intervalRef.current) clearInterval(intervalRef.current);
       intervalRef.current = null;
     };
-    // zależności: zmiana języka przelicza greetings, więc restartujemy pętlę
   }, [greetings, animateOnce]);
 
-  // Aktualizuj widoczny tekst, gdy zmieni się język lub liczba powitań.
   useEffect(() => {
     const safeIndex = greetings.length ? index % greetings.length : 0;
     setTitleText(greetings[safeIndex] ?? "");
@@ -87,12 +72,10 @@ export default function WelcomeScreen() {
   return (
     <ImageBackground source={backgroundImage} style={styles.background} imageStyle={{ opacity: 0.7 }}>
       <View style={styles.container}>
-        {/* Animowany nagłówek powitalny */}
         <Animated.Text style={[styles.title, { transform: [{ translateY: slideAnim }] }]}>
           {titleText}
         </Animated.Text>
 
-        {/* Start button */}
         <TouchableOpacity
           style={styles.button}
           onPress={() => router.push("/homeScreen")}
@@ -103,7 +86,6 @@ export default function WelcomeScreen() {
           <Text style={styles.buttonText}>{t("start")}</Text>
         </TouchableOpacity>
 
-        {/* Wybór języka */}
         <View style={[styles.langContainer, { position: "absolute", bottom: 40 }]}>
           {LANGS.map((lng) => (
             <LanguageButton

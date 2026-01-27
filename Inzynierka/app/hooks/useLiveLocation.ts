@@ -29,21 +29,6 @@ export type LiveLocationHandlers = {
   onHeading?: (heading: number) => void;
 };
 
-/**
- * useLiveLocation
- * ----------------
- * Bezpieczny hook wyciągający pełną logikę śledzenia urządzenia z MapScreen:
- * - requestForegroundPermissionsAsync
- * - getCurrentPositionAsync (lokalizacja startowa)
- * - watchPositionAsync (ruch użytkownika)
- * - watchHeadingAsync (kompas)
- * - poprawne czyszczenie subskrypcji
- *
- * ZACHOWUJE DOKŁADNIE TĘ SAMĄ FUNKCJONALNOŚĆ co dotychczasowa implementacja:
- * - identyczna dokładność (Highest)
- * - timeInterval: 900
- * - distanceInterval: 1
- */
 export function useLiveLocation() {
   const [userLocation, setUserLocation] = useState<Region | null>(null);
 
@@ -52,9 +37,6 @@ export function useLiveLocation() {
   const lastHeading = useRef<number | null>(null);
   const lastLocationForBearing = useRef<{ lat: number; lng: number } | null>(null);
 
-  /**
-   * Pobranie uprawnień + jednorazowa aktualna lokalizacja (TAK jak wcześniej w useEffect)
-   */
   const requestAndLoadInitialLocation = useCallback(async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") return null;
@@ -73,10 +55,6 @@ export function useLiveLocation() {
     return region;
   }, []);
 
-  /**
-   * Start śledzenia pozycji + headingu
-   * Wywoływane zamiast bezpośredniego Location.watchPositionAsync
-   */
   const startTracking = useCallback(async (handlers: LiveLocationHandlers) => {
     locationSubscription.current = await Location.watchPositionAsync(
       {
@@ -99,7 +77,6 @@ export function useLiveLocation() {
 
         handlers.onLocation?.({ lat, lng });
 
-        // ✅ BEARING Z RUCHU (ratunek dla Androida)
         if (lastLocationForBearing.current) {
           const prev = lastLocationForBearing.current;
           const bearing = calculateBearing(
@@ -109,7 +86,6 @@ export function useLiveLocation() {
             lng
           );
 
-          // jeśli kompas nie działa lub stoi w miejscu
           if (bearing && !isNaN(bearing)) {
             lastHeading.current = bearing;
             handlers.onHeading?.(bearing);
@@ -123,10 +99,8 @@ export function useLiveLocation() {
     headingSubscription.current = await Location.watchHeadingAsync((headingData) => {
       let newHeading = headingData.trueHeading ?? headingData.magHeading ?? 0;
 
-      // ❌ ODRZUĆ śmieci z Androida
       if (newHeading === 0) return;
 
-      // ✅ FILTR DRGAŃ (minimalna zmiana 4°)
       if (
         lastHeading.current === null ||
         Math.abs(newHeading - lastHeading.current) > 4
@@ -137,9 +111,6 @@ export function useLiveLocation() {
     });
   }, []);
 
-  /**
-   * Zatrzymanie wszystkich subskrypcji (TAK jak w handleStop)
-   */
   const stopTracking = useCallback(() => {
     if (headingSubscription.current) {
       headingSubscription.current.remove();
@@ -156,9 +127,6 @@ export function useLiveLocation() {
 
   }, []);
 
-  /**
-   * Cleanup przy unmount – zabezpieczenie przed wyciekami
-   */
   useEffect(() => {
     return () => {
       stopTracking();
@@ -167,7 +135,7 @@ export function useLiveLocation() {
 
   return {
     userLocation,
-    setUserLocation, // zostawione celowo, aby NIE zepsuć istniejącej logiki MapScreen
+    setUserLocation,
     requestAndLoadInitialLocation,
     startTracking,
     stopTracking,

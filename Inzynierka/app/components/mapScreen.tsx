@@ -65,14 +65,8 @@ export default function MapScreen({ selectedRoute }: MapScreenProps) {
   }, [userLocation]);
 
   const [overlayIndex, setOverlayIndex] = useState<number>(0);
-
-  /* Get routes data from API/storage */
   const { data: routesData } = useRoutesData();
-  
-  /* Get distance setting */
   const { distanceToPoint } = useAppSettings();
-
-  /* Pozostała logika bez zmian (lokalizacja, start/stop, UI...) */
 
   const {
     resolvedPoints,

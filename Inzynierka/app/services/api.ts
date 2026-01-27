@@ -1,6 +1,3 @@
-// app/services/api.ts
-// API service for fetching routes data from backend
-
 import { API_CONFIG, getFullUrl } from '../config/api';
 import { DataFile, Point, Route } from '../../assets/types';
 import { storageService } from './storage';
@@ -22,9 +19,6 @@ export class ApiError extends Error {
 }
 
 export const apiService = {
-  /**
-   * Fetch points from API
-   */
   async fetchPoints(): Promise<Point[]> {
     try {
       const controller = new AbortController();
@@ -57,9 +51,6 @@ export const apiService = {
     }
   },
 
-  /**
-   * Fetch paths (routes) from API
-   */
   async fetchPaths(): Promise<{ suggestedRoutes: Route[]; myRoutes: Route[] }> {
     try {
       const controller = new AbortController();
@@ -95,9 +86,6 @@ export const apiService = {
     }
   },
 
-  /**
-   * Fetch all routes data and save to storage
-   */
   async fetchAndSaveRoutesData(): Promise<DataFile> {
     try {
       const [points, paths] = await Promise.all([
@@ -112,7 +100,6 @@ export const apiService = {
         myRoutes: paths.myRoutes,
       };
 
-      // Save to storage for offline use
       await storageService.saveRoutesData(routesData);
 
       return routesData;
@@ -122,29 +109,20 @@ export const apiService = {
     }
   },
 
-  /**
-   * Get routes data - tries storage first, then fallback to embedded JSON
-   */
   async getRoutesData(): Promise<DataFile> {
     try {
-      // Try to get from storage first
       const storedData = await storageService.getRoutesData();
       if (storedData) {
         return storedData;
       }
 
-      // If no stored data, use fallback JSON
       return routesDataFallback as DataFile;
     } catch (error) {
       console.error('Error getting routes data:', error);
-      // Return fallback on any error
       return routesDataFallback as DataFile;
     }
   },
 
-  /**
-   * Fetch app settings from API
-   */
   async fetchSettings(): Promise<{ distance_to_point: number }> {
     try {
       const controller = new AbortController();
@@ -166,7 +144,6 @@ export const apiService = {
 
       const data = await response.json();
       
-      // Save to storage
       await storageService.saveAppSettings(data);
       
       return data;
@@ -181,22 +158,16 @@ export const apiService = {
     }
   },
 
-  /**
-   * Get app settings - tries storage first, then API
-   */
   async getAppSettings(): Promise<{ distance_to_point: number }> {
     try {
-      // Try storage first
       const storedSettings = await storageService.getAppSettings();
       if (storedSettings) {
         return storedSettings;
       }
 
-      // If no stored settings, fetch from API
       return await this.fetchSettings();
     } catch (error) {
       console.error('Error getting app settings:', error);
-      // Return default value on error
       return { distance_to_point: 20 };
     }
   },

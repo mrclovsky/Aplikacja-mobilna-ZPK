@@ -1,6 +1,3 @@
-// app/services/storage.ts
-// Offline storage service using AsyncStorage
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DataFile } from '../../assets/types';
 
@@ -12,9 +9,6 @@ const STORAGE_KEYS = {
 };
 
 export const storageService = {
-  /**
-   * Save routes data to local storage
-   */
   async saveRoutesData(data: DataFile): Promise<void> {
     try {
       const jsonData = JSON.stringify(data);
@@ -26,9 +20,6 @@ export const storageService = {
     }
   },
 
-  /**
-   * Get routes data from local storage
-   */
   async getRoutesData(): Promise<DataFile | null> {
     try {
       const jsonData = await AsyncStorage.getItem(STORAGE_KEYS.ROUTES_DATA);
@@ -40,9 +31,6 @@ export const storageService = {
     }
   },
 
-  /**
-   * Get last update timestamp
-   */
   async getLastUpdate(): Promise<Date | null> {
     try {
       const timestamp = await AsyncStorage.getItem(STORAGE_KEYS.LAST_UPDATE);
@@ -53,9 +41,6 @@ export const storageService = {
     }
   },
 
-  /**
-   * Clear all stored routes data
-   */
   async clearRoutesData(): Promise<void> {
     try {
       await AsyncStorage.multiRemove([STORAGE_KEYS.ROUTES_DATA, STORAGE_KEYS.LAST_UPDATE]);
@@ -65,9 +50,6 @@ export const storageService = {
     }
   },
 
-  /**
-   * Save app settings to local storage
-   */
   async saveAppSettings(settings: { distance_to_point: number }): Promise<void> {
     try {
       const jsonData = JSON.stringify(settings);
@@ -79,9 +61,6 @@ export const storageService = {
     }
   },
 
-  /**
-   * Get app settings from local storage
-   */
   async getAppSettings(): Promise<{ distance_to_point: number } | null> {
     try {
       const jsonData = await AsyncStorage.getItem(STORAGE_KEYS.APP_SETTINGS);

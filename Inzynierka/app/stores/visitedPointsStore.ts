@@ -1,14 +1,3 @@
-// app/stores/visitedPointsStore.ts
-// Store w pamięci dla zaliczonych punktów per trasa.
-// API:
-// - add(routeName, pointId): dodaje punkt (bez duplikatów) i powiadamia subskrybentów.
-// - has(routeName, pointId): sprawdza, czy punkt jest zaliczony.
-// - clear(routeName): czyści punkty danej trasy; dla null/undefined – brak akcji.
-// - subscribe(routeName, listener): subskrybuje zmiany danej trasy; zwraca unsubscribe.
-// Uwagi:
-// - Żadna z metod nie rzuca przy braku nazwy trasy – po prostu nic nie robią.
-// - Subskrybenci dostają zawsze kopię Set, aby uniknąć przypadkowych mutacji.
-
 type Listener = (ids: Set<string>) => void;
 
 class VisitedPointsStore {
@@ -42,7 +31,7 @@ class VisitedPointsStore {
   }
 
   clear(routeName: string | null | undefined) {
-    if (!routeName) return; // brak globalnego czyszczenia – zachowanie kompatybilne z mapScreen
+    if (!routeName) return;
     this.ensure(routeName);
     const set = this.points.get(routeName)!;
     if (set.size > 0) {

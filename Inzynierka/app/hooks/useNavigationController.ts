@@ -4,7 +4,6 @@ import { useNavigationStats } from "./useNavigationStats";
 import { useSaveAchievement } from "./useSaveAchievement";
 import { visitedStore } from "../stores/visitedPointsStore";
 
-// Minimalne interfejsy, żeby NIE wiązać hooka sztywno z implementacją
 export type CameraControllerLike = {
   runStartSequence: () => Promise<void>;
   runStopReset: () => Promise<void>;
@@ -43,18 +42,6 @@ export type UseNavigationControllerParams = {
   distanceToPoint: number;
 };
 
-/**
- * useNavigationController
- * -------------------------------------------------
- * W pełni bezpieczne wydzielenie funkcjonalności START / STOP nawigacji.
- * Zachowuje dokładnie tę samą logikę co w MapScreen:
- * - start/stop statystyk
- * - zapis osiągnięć
- * - reset visitedStore
- * - reset proximity
- * - start/stop GPS + heading
- * - sekwencje kamery
- */
 export function useNavigationController({
   selectedRoute,
   resolvedPoints,
@@ -73,9 +60,6 @@ export function useNavigationController({
   const { elapsedTime, distanceTravelled, start, stop } = useNavigationStats();
   const { saveAchievement } = useSaveAchievement();
 
-  /**
-   * START nawigacji – 1:1 jak w MapScreen
-   */
   const handleStart = useCallback(async () => {
     if (!selectedRoute || !userLocation) return;
 
@@ -116,9 +100,6 @@ export function useNavigationController({
     resolvedPoints,
   ]);
 
-  /**
-   * STOP nawigacji – 1:1 jak w MapScreen
-   */
   const handleStop = useCallback(async () => {
     setNavigationActive(false);
 

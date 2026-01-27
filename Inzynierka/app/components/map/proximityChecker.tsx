@@ -1,36 +1,24 @@
-// app/components/map/proximity.ts
-// Kontroler odpowiedzialny za wykrywanie bliskości punktów,
-// wystawianie banerów i oznaczanie zaliczeń w visitedStore.
-// Zachowuje tę samą logikę, co w dotychczasowym mapScreen.
-
 import { Point } from "../../../assets/types";
 import { visitedStore } from "../../stores/visitedPointsStore";
 
 type ProximityCallbacks = {
-  // Baner jednorazowy z czasem trwania (np. „Zaliczyłeś punkt”, 5s)
   showBanner: (text: string, durationMs?: number) => void;
-  // Komunikat „stały”, ustawiany tylko gdy nie ma aktywnego banera czasowego
-  // i gdy treść różni się od aktualnej (np. „Teraz zeskanuj kod QR”).
   showPersistentMessageIfNone: (text: string) => void;
-  // Natychmiastowe wyczyszczenie komunikatu + timera.
   clearMessage: () => void;
 };
 
 export type ProximityChecker = {
-  // Czyści wewnętrzne Sety anty-spamowe (wołaj przy starcie sesji/zmianie trasy/STOP).
   reset(): void;
-  // Główne sprawdzenie bliskości — wołaj na każdym odczycie pozycji.
   check(args: {
     lat: number;
     lng: number;
     points: Point[];
     routeName?: string;
-    distanceToPoint?: number; // Optional distance override from settings
+    distanceToPoint?: number;
   }): void;
 };
 
 export function createProximityChecker(cb: ProximityCallbacks): ProximityChecker {
-  // „Anty-spam” — żeby nie powielać tych samych akcji w pętli życia sesji
   const shownVirtual = new Set<string>();
   const shownPhysical = new Set<string>();
 
@@ -56,7 +44,6 @@ export function createProximityChecker(cb: ProximityCallbacks): ProximityChecker
 
     for (const p of points) {
       const d = distanceMeters(lat, lng, p.lat, p.lng);
-      // Use distanceToPoint from settings instead of p.radius
       if (d <= distanceToPoint) {
         anyInRange = true;
         const alreadyVisited = visitedStore.has(routeName, p.id);
@@ -70,15 +57,13 @@ export function createProximityChecker(cb: ProximityCallbacks): ProximityChecker
         } else {
           if (!alreadyVisited) {
             if (!shownPhysical.has(p.id)) shownPhysical.add(p.id);
-            // Utrzymanie warunku: tylko gdy nie ma aktywnego timera i nie dublujemy treści
             cb.showPersistentMessageIfNone("Teraz zeskanuj kod QR");
           }
         }
-        break; // pierwszy trafiony punkt wystarcza — tak jak wcześniej
+        break;
       }
     }
 
-    // Po wyjściu ze stref — czyścimy komunikat i sety (jak wcześniej)
     if (!anyInRange) {
       cb.clearMessage();
       shownVirtual.clear();

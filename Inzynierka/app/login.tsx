@@ -1,10 +1,3 @@
-// app/login.tsx
-// Ekran logowania z dwoma polami oraz przyciskiem akcji.
-// Funkcjonalność:
-// - Wyświetla tytuł z tłumaczeń i18n.
-// - Dwa pola wejściowe (nazwa użytkownika i hasło) z jednolitym wyglądem.
-// - Po naciśnięciu przycisku przechodzi do /homeScreen (bez walidacji, zgodnie z oryginałem).
-
 import React, { useCallback } from "react";
 import { ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
@@ -58,10 +51,6 @@ export default function LoginScreen() {
   );
 }
 
-/**
- * Jednolite pole formularza z predefiniowanymi stylami i opcjami dostępności.
- * Pozwala uniknąć duplikacji kodu dla wielu pól.
- */
 function FormInput({
   placeholder,
   accessibilityLabel,

@@ -1,15 +1,12 @@
-// app/screens/homeScreen.tsx
 import React, { useEffect, useMemo, useState } from "react";
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import Ionicons from "react-native-vector-icons/Ionicons";
-
 import { Route } from "../assets/types";
 import AchievementsScreen from "./components/achievementsScreen";
 import MapScreen from "./components/mapScreen";
 import RoutesListScreen from "./components/routesListScreen";
 import SettingsScreen from "./components/settingsScreen";
-
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const backgroundImage = require("../assets/images/las.jpg");
@@ -24,7 +21,6 @@ const COLORS = {
   dot: "#fff",
 };
 
-// W razie potrzeby dopasuj tę wysokość (w px)
 const NAVBAR_HEIGHT = 64;
 const NAVBAR_BOTTOM_OFFSET = 12;
 
@@ -88,12 +84,11 @@ export default function HomeScreen() {
       <View style={styles.container}>
         <View style={[styles.contentWrapper, 
         !isFullScreen && { paddingBottom:
-        NAVBAR_HEIGHT + (insets.bottom ?? 0) + NAVBAR_BOTTOM_OFFSET, // ✅ IDEALNIE ZGODNE Z NAVBAREM
+        NAVBAR_HEIGHT + (insets.bottom ?? 0) + NAVBAR_BOTTOM_OFFSET,
       },]}>
           <Content />
         </View>
 
-        {/* navbar jako absolutny overlay; bottom zależy od safe-area + offset */}
         <View
           style={[
             styles.navbar,
@@ -159,7 +154,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     borderRadius: 14,
     zIndex: 200,
-    // nie ustawiamy paddingBottom = insets; używamy wysokości NAVBAR_HEIGHT
   },
 
   navItem: { justifyContent: "center", alignItems: "center", paddingHorizontal: 6, flex: 1 },

@@ -1,6 +1,3 @@
-// app/components/routesListScreen.tsx
-// Lista tras z dwiema zakładkami: polecane oraz moje.
-
 import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import {
   ActivityIndicator,
@@ -38,23 +35,15 @@ const THEME = {
   shadow: "#000",
 };
 
-// Podnieśliśmy TOP_MARGIN żeby przyciski były mocniej obniżone
-const TOP_MARGIN = 64; // wcześniej 8
+const TOP_MARGIN = 64;
 
 export default function RoutesListScreen({ onSelectRoute }: RoutesListScreenProps) {
   const scrollRef = useRef<ScrollView>(null);
   const insets = useSafeAreaInsets();
-
   const [expandedRoutes, setExpandedRoutes] = useState<Record<string, boolean>>({});
-
-  // Use the custom hook to manage routes data
   const { data, isLoading, isRefreshing, error, refresh } = useRoutesData();
-  
   const routesToRender = useMemo<Route[]>(() => data.suggestedRoutes ?? [], [data]);
 
-  // Removed tab switching - no longer needed
-
-  // Animowane rozwijanie/zwijanie szczegółów.
   const toggleDetails = useCallback((routeName: string) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setExpandedRoutes((prev) => ({ ...prev, [routeName]: !prev[routeName] }));
@@ -64,7 +53,6 @@ export default function RoutesListScreen({ onSelectRoute }: RoutesListScreenProp
     onSelectRoute(route);
   }, [onSelectRoute]);
 
-  // Paddingy uwzględniające safe area i navbar od dołu
   const containerPaddingTop = (insets.top ?? 0) + TOP_MARGIN;
   const containerPaddingBottom = 0;
   const containerPaddingHorizontal = Math.max(12, (insets.left ?? 0), (insets.right ?? 0));
@@ -73,7 +61,6 @@ export default function RoutesListScreen({ onSelectRoute }: RoutesListScreenProp
     try {
       await refresh();
     } catch (err) {
-      // Error is already logged in the hook
       console.log('Refresh failed, using cached data');
     }
   }, [refresh]);
@@ -89,7 +76,6 @@ export default function RoutesListScreen({ onSelectRoute }: RoutesListScreenProp
         },
       ]}
     >
-      {/* Loading indicator */}
       {isLoading && (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={THEME.brand} />
@@ -97,7 +83,6 @@ export default function RoutesListScreen({ onSelectRoute }: RoutesListScreenProp
         </View>
       )}
 
-      {/* Error message */}
       {error && !isLoading && (
         <View style={styles.errorContainer}>
           <Ionicons name="alert-circle" size={32} color="#ef4444" />
@@ -105,7 +90,6 @@ export default function RoutesListScreen({ onSelectRoute }: RoutesListScreenProp
         </View>
       )}
 
-      {/* Lista tras */}
       {!isLoading && (
         <ScrollView
           ref={scrollRef}
@@ -127,7 +111,6 @@ export default function RoutesListScreen({ onSelectRoute }: RoutesListScreenProp
             />
           ))}
 
-          {/* Refresh Button */}
           <TouchableOpacity
             style={[styles.refreshButton, isRefreshing && styles.refreshButtonDisabled]}
             onPress={handleRefresh}
@@ -149,9 +132,6 @@ export default function RoutesListScreen({ onSelectRoute }: RoutesListScreenProp
   );
 }
 
-/**
- * Karta trasy z nagłówkiem oraz sekcją szczegółów rozwijaną z animacją.
- */
 function RouteCard({
   route,
   expanded,
@@ -194,9 +174,6 @@ function RouteCard({
   );
 }
 
-/**
- * Jednolity element informacyjny z ikoną i wartością (np. liczba punktów, długość trasy).
- */
 function InfoPill({ icon, value }: { icon: string; value: string }) {
   return (
     <View style={styles.infoBox}>
@@ -209,7 +186,6 @@ function InfoPill({ icon, value }: { icon: string; value: string }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "transparent" },
 
-  // Loading and error states
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
@@ -234,11 +210,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-  // Lista tras
   routesContainer: { flex: 1, marginTop: 18 },
   routesContent: { gap: 15, paddingBottom: 40 },
 
-  // Karta trasy
   routeBox: {
     backgroundColor: THEME.cardBg,
     padding: 20,
@@ -254,7 +228,6 @@ const styles = StyleSheet.create({
   routeText: { flex: 1, color: THEME.text, fontSize: 20, fontWeight: "700" },
   detailsButton: { padding: 4 },
 
-  // Szczegóły trasy
   detailsContainer: { marginTop: 12, paddingHorizontal: 0 },
   infoRow: { flexDirection: "row", marginBottom: 10 },
   infoBox: {
@@ -279,7 +252,6 @@ const styles = StyleSheet.create({
   },
   selectButtonText: { color: THEME.text, fontWeight: "700", fontSize: 20 },
 
-  // Refresh button
   refreshButton: {
     backgroundColor: THEME.brand,
     flexDirection: "row",

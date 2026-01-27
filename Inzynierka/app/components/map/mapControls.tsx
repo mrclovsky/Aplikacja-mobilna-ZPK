@@ -10,55 +10,35 @@ import {
 } from "./uiComponents";
 
 export type MapControlsProps = {
-  // --- ogólne ---
   navigationActive: boolean;
   canStart: boolean;
 
-  // --- akcje ---
   onStart: () => void | Promise<void>;
   onStop: () => void | Promise<void>;
   onToggleTracking: () => void | Promise<void>;
   onScan: (routeName: string) => void;
 
-  // --- stan ---
   trackingMode: boolean;
   selectedRouteName?: string;
 
-  // --- HUD ---
-  elapsed: string; // np. "mm:ss"
-  pointsText: string; // np. "3/10"
-  distanceText: string; // np. "1.25 km"
+  elapsed: string; 
+  pointsText: string; 
+  distanceText: string; 
 
-  // --- selektor mapy ---
   overlayIndex: number;
   onOverlayChange: (idx: number) => void;
   translatedEntries: string[];
   mapLabels: { none: string; mapPrefix: string };
 
-  // --- kolory ---
   themeColors: {
     primary: string;
     onPrimary: string;
     onSurface: string;
   };
 
-  // --- layout ---
-  navBarHeight: number; // np. 64
+  navBarHeight: number;
 };
 
-/**
- * MapControls
- * --------------------------------------------------
- * W pełni bezpieczne wydzielenie dolnego panelu + HUD:
- * - MapSelectButton
- * - StartStopButton
- * - ToggleTrackingButton
- * - ScanQRButton
- * - HudCounters
- *
- * Komponent NIE przejmuje żadnej logiki biznesowej.
- * Jest w 100% sterowany przez propsy (identycznie jak wcześniej w MapScreen).
- */
 export default function MapControls({
   navigationActive,
   canStart,
@@ -80,7 +60,6 @@ export default function MapControls({
 }: MapControlsProps) {
   return (
     <>
-      {/* Dolny panel sterowania */}
       <View style={[styles.bottomRow, { bottom: navBarHeight + 70 }]}>
         <MapSelectButton
             selectedIndex={overlayIndex}
@@ -89,8 +68,6 @@ export default function MapControls({
             navigationActive={navigationActive}
             labels={mapLabels}
         />
-        
-        {/* TOGGLE — jeśli nie ma, wstawiamy dummy o tej samej wielkości */}
         {navigationActive ? (
             <ToggleTrackingButton
             tracking={trackingMode}
@@ -104,7 +81,6 @@ export default function MapControls({
         ) : (
             <View style={styles.dummy} />
         )}
-
         <StartStopButton
           navigationActive={navigationActive}
           canStart={canStart}
@@ -123,7 +99,6 @@ export default function MapControls({
         )}
       </View>
 
-      {/* HUD */}
       {navigationActive && (
         <HudCounters
           elapsed={elapsed}

@@ -2,7 +2,6 @@ import { MutableRefObject } from "react";
 import { Dimensions, Platform } from "react-native";
 import MapView, { Camera, LatLng, Region } from "react-native-maps";
 
-/* — Parametry jak wcześniej — */
 const SMOOTH_ALPHA = 0.15;
 const HEADING_MIN_INTERVAL = 250;
 const HEADING_ANIM_DURATION = 300;
@@ -25,8 +24,7 @@ const TOGGLE_ZOOM_MS   = 300;
 const TOGGLE_ROTATE_MS = 260;
 const TOGGLE_FINAL_MS  = 200;
 
-/* — Drobna histereza na heading, żeby wyciąć mikrodrgania — */
-const HEADING_EPS = 0.75; // stopnie
+const HEADING_EPS = 0.75;
 
 export type CameraController = {
   runStartSequence(): Promise<void>;
@@ -42,7 +40,7 @@ type Deps = {
   trackingModeRef: MutableRefObject<boolean>;
   userLocationRef: MutableRefObject<{ lat: number; lng: number } | null>;
   headingRef: MutableRefObject<number>;
-  setHeading: (h: number) => void; // synchronizuje stan + ref w mapScreen
+  setHeading: (h: number) => void;
 };
 
 export function createCameraController({
@@ -52,10 +50,9 @@ export function createCameraController({
   headingRef,
   setHeading,
 }: Deps): CameraController {
-  // wewnętrzne „refy”
   const smoothedHeadingRef = ref<number | null>(null);
   const latestHeadingRef   = ref<number>(0);
-  const lastAppliedHeadingRef = ref<number>(0); // do histerezy
+  const lastAppliedHeadingRef = ref<number>(0);
   const desiredPitchRef    = ref<number>(0);
 
   const isProgrammaticChangeRef = ref<boolean>(false);
@@ -66,7 +63,6 @@ export function createCameraController({
   const lastHeadingAnimTsRef       = ref<number>(0);
   const lastCenterTsRef            = ref<number>(0);
 
-  /* helpers */
   const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
   const armProgrammaticGuard = (ms: number) => {
@@ -137,7 +133,6 @@ export function createCameraController({
     return (to - from + 540) % 360 - 180;
   }
 
-  /* pojedyncze kroki */
   const centerOnUser = async ({
     duration = 260,
     includeHeading = true,
@@ -240,7 +235,6 @@ export function createCameraController({
     }, duration);
   };
 
-  /* sekwencje */
   const runStartSequence = async () => {
     if (!mapRef.current || !userLocationRef.current) return;
 
@@ -292,7 +286,6 @@ export function createCameraController({
     isAnimatingRef.current = false;
   };
 
-  /* eventy z mapScreen */
   const onPositionUpdate = async ({ navigationActive }: { navigationActive: boolean }) => {
     if (
       !navigationActive ||
@@ -304,7 +297,6 @@ export function createCameraController({
     }
     const now = Date.now();
     if (now - (lastCenterTsRef.current || 0) >= CENTER_TICK_MS) {
-      // można czekać – pozycja rzadko (900 ms)
       await centerOnUser({
         duration: 240,
         includeHeading: false,
@@ -325,7 +317,6 @@ export function createCameraController({
     latestHeadingRef.current = next;
     setHeading(next);
 
-    // histereza — nie animuj dla mikrozmian
     const deltaFromApplied = Math.abs(deltaAngle(next, lastAppliedHeadingRef.current));
     if (deltaFromApplied < HEADING_EPS) return;
 
@@ -339,8 +330,6 @@ export function createCameraController({
       lastAppliedHeadingRef.current = next;
 
       if (trackingModeRef.current) {
-        // fire-and-forget: nie blokujemy kolejnych próbek
-        // (ew. błędy łapiemy „w próżni”, żeby nie generowały warningów)
         centerOnUser({
           duration: HEADING_ANIM_DURATION,
           includeHeading: true,
@@ -348,7 +337,6 @@ export function createCameraController({
           useOffset: true,
         }).catch(() => {});
       } else {
-        // również fire-and-forget
         (async () => {
           await runAnim(() => {
             mapRef.current!.animateCamera(

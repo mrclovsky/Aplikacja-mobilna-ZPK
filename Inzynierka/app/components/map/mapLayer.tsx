@@ -16,22 +16,10 @@ export type MapLayerProps = {
   trackingMode: boolean;
   onRegionChange?: (region: Region) => void;
   onRegionChangeComplete?: (region: Region) => void;
-  arrowImage: any; // require(...) przekazywany z zewnątrz
+  arrowImage: any;
   routeColor?: string;
 };
 
-/**
- * MapLayer
- * --------------------------------------------------
- * W pełni bezpieczne wydzielenie warstwy renderującej mapę:
- * - MapView
- * - Polyline trasy
- * - Marker użytkownika
- * - Markery punktów
- * - MapOverlayLayer
- *
- * Komponent zachowuje dokładnie to samo zachowanie co wcześniej w MapScreen.
- */
 export default function MapLayer({
   mapRef,
   userLocation,
@@ -66,7 +54,6 @@ export default function MapLayer({
       onRegionChange={onRegionChange}
       onRegionChangeComplete={onRegionChangeComplete}
     >
-      {/* overlay + corner markers */}
       <MapOverlayLayer overlayIndex={overlayIndex} hideCornerMarkers={true}/>
 
       {routeCoordinates.length >= 2 && (

@@ -1,17 +1,7 @@
-// app/hooks/useSaveAchievement.ts
-// Hook odpowiedzialny za dopisywanie osiągnięć do pliku JSON w katalogu dokumentów.
-// Zakres:
-// - Wyznaczenie pełnej liczby punktów trasy (z route.pointRefs lub defaultPoints).
-// - Formatowanie czasu (mm:ss), daty (YYYY-MM-DD) i dystansu (km, 2 miejsca).
-// - Utworzenie pliku, jeśli nie istnieje, oraz bezpieczny odczyt/zapis z tolerancją na uszkodzony JSON.
-// - Dopisanie nowego osiągnięcia na koniec istniejącej listy.
-
 import { File, Paths } from "expo-file-system";
 import { Achievement, Route } from "../../assets/types";
 
 const STORE = new File(Paths.document, "achievementsData.json");
-
-/* ===== Pomocnicze ===== */
 
 const makeId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(v, max));
@@ -26,7 +16,7 @@ const toTimeStr = (seconds: number) => {
 
 const metersToKm2 = (meters: number) => {
   const km = meters / 1000;
-  return Math.round(km * 100) / 100; // liczba z max 2 miejscami po przecinku
+  return Math.round(km * 100) / 100;
 };
 
 type StoreShape = { achievements: Achievement[] };
@@ -46,7 +36,6 @@ const readStore = async (): Promise<StoreShape> => {
     if (Array.isArray(parsed?.achievements)) return { achievements: parsed.achievements as Achievement[] };
     return { achievements: [] };
   } catch {
-    // uszkodzony JSON lub błąd odczytu – traktuj jako pustą listę
     return { achievements: [] };
   }
 };
@@ -55,17 +44,8 @@ const writeStore = async (data: StoreShape) => {
   STORE.write(JSON.stringify(data, null, 2), { encoding: "utf8" });
 };
 
-/* ===== Hook API ===== */
 
 export const useSaveAchievement = () => {
-  /**
-   * Zapisuje osiągnięcie na podstawie metryk przejścia trasy.
-   * @param route          trasa (format z pointRefs / defaultPoints)
-   * @param elapsedTime    czas w sekundach
-   * @param distance       dystans w metrach
-   * @param achievedPoints liczba zaliczonych punktów
-   * @param totalPoints    opcjonalnie pełna liczba punktów trasy; jeśli brak, wyliczana z route
-   */
   const saveAchievement = async (
     route: Route,
     elapsedTime: number,

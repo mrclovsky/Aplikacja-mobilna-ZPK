@@ -1,11 +1,3 @@
-// app/screens/settingsScreen.tsx
-// Ekran ustawień użytkownika.
-// Zawiera: awatar, nazwę użytkownika, wybór języka i przycisk wylogowania.
-// Założenia:
-// - Logika przełączania języka z i18next.
-// - Wylogowanie poprzez przejście do "/" (expo-router).
-// - Prosty, przewidywalny UI bez duplikacji kodu (wspólny komponent przycisku językowego).
-
 import React, { useCallback, memo, useState, useEffect } from "react";
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -30,7 +22,6 @@ export default function SettingsScreen() {
   const [isLoadingDistance, setIsLoadingDistance] = useState(true);
   const [isRefreshingDistance, setIsRefreshingDistance] = useState(false);
 
-  // Load distance setting on mount
   useEffect(() => {
     loadDistanceSetting();
   }, []);
@@ -70,7 +61,6 @@ export default function SettingsScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Wybór języka */}
       <View style={styles.langContainer}>
         {LANGS.map((lng) => (
           <LanguageButton
@@ -82,7 +72,6 @@ export default function SettingsScreen() {
         ))}
       </View>
 
-      {/* Distance to point setting */}
       <View style={styles.distanceContainer}>
         <View style={styles.distanceHeader}>
           <Text style={styles.distanceLabel}>{t("distanceToPoint")}</Text>
@@ -111,7 +100,6 @@ export default function SettingsScreen() {
         )}
       </View>
 
-      {/* Back to start */}
       <TouchableOpacity style={styles.logoutButton} onPress={handleBackToStart} activeOpacity={0.85}>
         <Text style={styles.logoutButtonText}>{t("backToStart")}</Text>
       </TouchableOpacity>
@@ -119,10 +107,6 @@ export default function SettingsScreen() {
   );
 }
 
-/**
- * Pojedynczy przycisk wyboru języka (kapsuła).
- * Odpowiada za spójny wygląd i aktywny stan.
- */
 const LanguageButton = memo(function LanguageButton({
   label,
   active,
@@ -147,15 +131,12 @@ const LanguageButton = memo(function LanguageButton({
 });
 
 const styles = StyleSheet.create({
-  // Układ główny ekranu
   container: {
     alignItems: "center",
     justifyContent: "center",
     flex: 1,
     padding: 20,
   },
-
-  // Pasek wyboru języka
   langContainer: {
     flexDirection: "row",
     marginBottom: 30,
@@ -174,8 +155,6 @@ const styles = StyleSheet.create({
     color: THEME.text,
     fontWeight: "600",
   },
-
-  // Distance to point section
   distanceContainer: {
     width: "100%",
     backgroundColor: THEME.chipBg,
@@ -219,8 +198,6 @@ const styles = StyleSheet.create({
     opacity: 0.8,
     paddingHorizontal: 10,
   },
-
-  // Przycisk wylogowania
   logoutButton: {
     backgroundColor: THEME.brand,
     paddingVertical: 10,

@@ -1,4 +1,3 @@
-// app/components/map/MapOverlayLayer.tsx
 import React, { useMemo } from "react";
 import { Image } from "react-native";
 import MapView, { Overlay, Marker } from "react-native-maps";
@@ -6,13 +5,11 @@ import proj4 from "proj4";
 import chRegionData from "../../../assets/data/Chylonia_region.json";
 import grRegionData from "../../../assets/data/Grabowek_region.json";
 
-/* EPSG:2180 */
 proj4.defs(
   "EPSG:2180",
   "+proj=tmerc +lat_0=0 +lon_0=19 +k=0.9993 +x_0=500000 +y_0=-5300000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs"
 );
 
-// jawna adnotacja typu number żeby TypeScript nie inferował typu literalnego
 const MANUAL_SHIFT_METERS: number = -8;
 
 type CornerSetProjected = {
@@ -77,7 +74,6 @@ function projCornersToWgs84(c: CornerSetProjected) {
   return { tl, tr, bl, br, sw, ne };
 }
 
-/* ----- afinic transformation helpers ----- */
 function computeAffineTransform(fromCorners: CornerSetProjected, toCorners: CornerSetProjected) {
   const fromPts = [fromCorners.tl, fromCorners.tr, fromCorners.br, fromCorners.bl];
   const toPts = [toCorners.tl, toCorners.tr, toCorners.br, toCorners.bl];
@@ -249,8 +245,6 @@ export default function MapOverlayLayer({ overlayIndex, hideCornerMarkers }: { o
             }
 
             if (MANUAL_SHIFT_METERS !== 0) {
-              // zachowujemy dotychczasowy znak (u Ciebie był -MANUAL_SHIFT_METERS w jednym miejscu),
-              // tutaj stosujemy -MANUAL_SHIFT_METERS dla CH (zgodnie z wcześniejszą logiką).
               projCorners = applyOffsetToCorners(projCorners, 0, -MANUAL_SHIFT_METERS);
             }
 

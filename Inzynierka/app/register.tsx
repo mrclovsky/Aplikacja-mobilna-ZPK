@@ -1,10 +1,3 @@
-// app/register.tsx
-// Ekran rejestracji z czterema polami formularza i prostą walidacją zgodności haseł.
-// Założenia:
-// - Teksty tytułu i etykiet pochodzą z i18n.
-// - Po kliknięciu przycisku wykonywana jest walidacja haseł, a następnie wyświetlany jest Alert.
-// - Brak nawigacji po rejestracji (zachowanie jak w oryginale).
-
 import React, { useState, useCallback } from "react";
 import { Alert, ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -31,7 +24,6 @@ export default function RegisterScreen() {
       return;
     }
     Alert.alert("Rejestracja", `Email: ${email}\nNazwa użytkownika: ${username}`);
-    // Tu można dodać właściwą logikę rejestracji (API, walidacje itp.)
   }, [email, username, password, confirmPassword]);
 
   return (
@@ -86,10 +78,6 @@ export default function RegisterScreen() {
   );
 }
 
-/**
- * Jednolite pole formularza z gotowymi stylami i typowymi właściwościami.
- * Pomaga unikać duplikacji i utrzymać spójny wygląd pól.
- */
 function FormInput({
   value,
   onChangeText,

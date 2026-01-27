@@ -1,6 +1,3 @@
-// app/hooks/useAppSettings.ts
-// Custom hook for accessing app settings (like distance_to_point)
-
 import { useEffect, useState } from 'react';
 import { apiService } from '../services/api';
 

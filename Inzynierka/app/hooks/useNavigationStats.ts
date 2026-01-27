@@ -1,15 +1,3 @@
-// app/hooks/useNavigationStats.ts
-// Hook mierzący czas i dystans podczas nawigacji.
-// API:
-// - elapsedTime: liczba sekund od startu.
-// - distanceTravelled: łączny dystans w metrach od startu.
-// - start(): rozpoczyna pomiar czasu i dystansu (idempotentne).
-// - stop(): zatrzymuje pomiar i zwraca finalne { finalTime, finalDistance }.
-// Uwagi implementacyjne:
-// - Czas zliczany interwałem 1 s (spójny z obecnym UI).
-// - Dystans sumowany inkrementalnie na podstawie kolejnych pozycji GPS.
-// - Subskrypcja GPS i timer są czyszczone przy stop() oraz przy odmontowaniu hooka.
-
 import * as Location from "expo-location";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -48,7 +36,7 @@ export function useNavigationStats() {
   const isRunningRef = useRef(false);
 
   const start = useCallback(async () => {
-    if (isRunningRef.current) return; // ochrona przed wielokrotnym wywołaniem
+    if (isRunningRef.current) return;
     isRunningRef.current = true;
 
     setElapsedTime(0);
@@ -96,7 +84,6 @@ export function useNavigationStats() {
     return { finalTime, finalDistance };
   }, [elapsedTime, distanceTravelled]);
 
-  // Sprzątanie na odmontowanie hooka
   useEffect(() => {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
