@@ -4,6 +4,7 @@
   "welcome": "Привіт!",
   "login": "Увійти",
   "register": "Зареєструватися",
+  "letsgo": "Почнімо!",
 
   "loginTitle": "Вхід",
   "username": "Ім'я користувача",
@@ -15,7 +16,7 @@
 
   "settingsPage": "Налаштування",
   "logoutButton": "Вийти",
-  "backToStart": "Повернутися на початок",
+  "back": "Назад",
   "distanceToPoint": "Відстань до точки",
   "distanceNote": "Це зараховується, якщо GPS показує, що ви знаходитесь у межах {{distance}} метрів від точки.",
 

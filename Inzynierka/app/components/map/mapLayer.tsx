@@ -1,10 +1,8 @@
 import React from "react";
-import { Image } from "react-native";
+import { Image, Platform } from "react-native";
 import MapView, { Marker, Polyline, Region } from "react-native-maps";
 import type { Point } from "../../../assets/types";
 import MapOverlayLayer from "./mapOverlayLayer";
-import { Platform } from "react-native";
-
 
 export type MapLayerProps = {
   mapRef: React.RefObject<MapView>;
@@ -33,7 +31,8 @@ export default function MapLayer({
   arrowImage,
   routeColor = "#00FF30",
 }: MapLayerProps) {
-  const mapRotateEnabled = false;
+  
+  const mapRotateEnabled = trackingMode; 
   const mapPitchEnabled = !trackingMode;
   const mapScrollEnabled = !trackingMode;
   const mapZoomEnabled = !trackingMode;
@@ -44,7 +43,7 @@ export default function MapLayer({
       style={{ flex: 1 }}
       initialRegion={userLocation}
       showsUserLocation={false}
-      showsMyLocationButton={true}
+      showsMyLocationButton={false} 
       showsCompass={false}
       rotateEnabled={mapRotateEnabled}
       pitchEnabled={mapPitchEnabled}
@@ -53,17 +52,9 @@ export default function MapLayer({
       loadingEnabled={true}
       onRegionChange={onRegionChange}
       onRegionChangeComplete={onRegionChangeComplete}
+      mapType={Platform.OS === "android" ? "none" : "standard"}
     >
-      <MapOverlayLayer overlayIndex={overlayIndex} hideCornerMarkers={true}/>
-
-      {routeCoordinates.length >= 2 && (
-        <Polyline
-          coordinates={routeCoordinates}
-          strokeColor={routeColor}
-          strokeWidth={4}
-          geodesic={false}
-        />
-      )}
+      <MapOverlayLayer overlayIndex={overlayIndex} />
 
       <Marker
         coordinate={{
@@ -71,10 +62,10 @@ export default function MapLayer({
           longitude: userLocation.longitude,
         }}
         anchor={{ x: 0.5, y: 0.5 }}
-        flat={false}
-        rotation={0}
-        zIndex={9999}
-        tracksViewChanges={true}
+        flat={trackingMode}
+        rotation={0} 
+        zIndex={1000}
+        tracksViewChanges={false}
       >
         <Image source={arrowImage} style={{ width: 35, height: 35 }} />
       </Marker>
@@ -104,10 +95,22 @@ export default function MapLayer({
                 ? { x: 0.5, y: 0.5 }   
                 : { x: 0.5, y: 1 }
             } 
-            zIndex={10}
+            zIndex={500}
+            tracksViewChanges={false}
           />
         );
       })}
+
+      {routeCoordinates.length >= 2 && (
+        <Polyline
+          coordinates={routeCoordinates}
+          strokeColor={routeColor}
+          strokeWidth={4}
+          zIndex={9999} 
+          tappable={true}     
+          geodesic={true}
+        />
+      )}
     </MapView>
   );
 }

@@ -1,9 +1,0 @@
-{
-  "region": "Chylonia",
-  "wgs84_corners": {
-  "tl": { "longitude": 18.4542453, "latitude": 54.5383983},
-  "tr": { "longitude": 18.4913234, "latitude": 54.53856},
-  "br": { "longitude": 18.4916583, "latitude": 54.51161},
-  "bl": { "longitude": 18.4546046, "latitude": 54.5114486}
-  }
-}

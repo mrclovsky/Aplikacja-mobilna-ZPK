@@ -27,6 +27,7 @@ export type MapControlsProps = {
 
   overlayIndex: number;
   onOverlayChange: (idx: number) => void;
+  isMapLoading: boolean;
   translatedEntries: string[];
   mapLabels: { none: string; mapPrefix: string };
 
@@ -53,6 +54,7 @@ export default function MapControls({
   distanceText,
   overlayIndex,
   onOverlayChange,
+  isMapLoading,
   translatedEntries,
   mapLabels,
   themeColors,
@@ -67,6 +69,7 @@ export default function MapControls({
             entries={translatedEntries}
             navigationActive={navigationActive}
             labels={mapLabels}
+            isLoading={isMapLoading}
         />
         {navigationActive ? (
             <ToggleTrackingButton

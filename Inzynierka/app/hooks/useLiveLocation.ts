@@ -2,28 +2,6 @@ import * as Location from "expo-location";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Region } from "react-native-maps";
 
-function calculateBearing(
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number
-) {
-  const toRad = (deg: number) => (deg * Math.PI) / 180;
-  const toDeg = (rad: number) => (rad * 180) / Math.PI;
-
-  const φ1 = toRad(lat1);
-  const φ2 = toRad(lat2);
-  const Δλ = toRad(lon2 - lon1);
-
-  const y = Math.sin(Δλ) * Math.cos(φ2);
-  const x =
-    Math.cos(φ1) * Math.sin(φ2) -
-    Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
-
-  const θ = Math.atan2(y, x);
-  return (toDeg(θ) + 360) % 360;
-}
-
 export type LiveLocationHandlers = {
   onLocation?: (coords: { lat: number; lng: number }) => void;
   onHeading?: (heading: number) => void;
@@ -35,7 +13,7 @@ export function useLiveLocation() {
   const headingSubscription = useRef<any>(null);
   const locationSubscription = useRef<Location.LocationSubscription | null>(null);
   const lastHeading = useRef<number | null>(null);
-  const lastLocationForBearing = useRef<{ lat: number; lng: number } | null>(null);
+  const lastSpeed = useRef<number>(0);
 
   const requestAndLoadInitialLocation = useCallback(async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
@@ -59,57 +37,53 @@ export function useLiveLocation() {
     locationSubscription.current = await Location.watchPositionAsync(
       {
         accuracy: Location.Accuracy.Highest,
-        timeInterval: 900,
-        distanceInterval: 1,
+        timeInterval: 2000, 
+        distanceInterval: 3, 
       },
-      async (loc) => {
-        const lat = loc.coords.latitude;
-        const lng = loc.coords.longitude;
+      (loc) => {
+        const { latitude, longitude, heading, speed, accuracy } = loc.coords;
+
+        const isAccuracyAcceptable = accuracy !== null && accuracy < 20;
+
+        lastSpeed.current = isAccuracyAcceptable ? (speed ?? 0) : 0;
 
         const region: Region = {
-          latitude: lat,
-          longitude: lng,
+          latitude,
+          longitude,
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         };
 
         setUserLocation(region);
+        handlers.onLocation?.({ lat: latitude, lng: longitude });
 
-        handlers.onLocation?.({ lat, lng });
-
-        if (lastLocationForBearing.current) {
-          const prev = lastLocationForBearing.current;
-          const bearing = calculateBearing(
-            prev.lat,
-            prev.lng,
-            lat,
-            lng
-          );
-
-          if (bearing && !isNaN(bearing)) {
-            lastHeading.current = bearing;
-            handlers.onHeading?.(bearing);
+        if (isAccuracyAcceptable && lastSpeed.current > 0.5 && heading !== null && heading >= 0) {
+          if (
+            lastHeading.current === null ||
+            Math.abs(heading - lastHeading.current) > 4
+          ) {
+            lastHeading.current = heading;
+            handlers.onHeading?.(heading);
           }
         }
-
-        lastLocationForBearing.current = { lat, lng };
       }
     );
 
     headingSubscription.current = await Location.watchHeadingAsync((headingData) => {
-      let newHeading = headingData.trueHeading ?? headingData.magHeading ?? 0;
+      if (lastSpeed.current > 0.5) return;
 
+      let newHeading = headingData.trueHeading ?? headingData.magHeading ?? 0;
       if (newHeading === 0) return;
 
       if (
         lastHeading.current === null ||
-        Math.abs(newHeading - lastHeading.current) > 4
+        Math.abs(newHeading - lastHeading.current) > 5
       ) {
         lastHeading.current = newHeading;
         handlers.onHeading?.(newHeading);
       }
     });
-  }, []);
+    }, []);
 
   const stopTracking = useCallback(() => {
     if (headingSubscription.current) {
@@ -123,7 +97,7 @@ export function useLiveLocation() {
     }
 
     lastHeading.current = null;
-    lastLocationForBearing.current = null;
+    lastSpeed.current = 0;
 
   }, []);
 

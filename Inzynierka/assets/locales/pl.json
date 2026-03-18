@@ -4,6 +4,7 @@
   "welcome": "Witaj!",
   "login": "Zaloguj się",
   "register": "Zarejestruj się",
+  "letsgo": "Zaczynamy!",
 
   "loginTitle": "Logowanie",
   "username": "Nazwa użytkownika",
@@ -15,7 +16,7 @@
 
   "settingsPage": "Ustawienia",
   "logoutButton": "Wyloguj",
-  "backToStart": "Powrót do startu",
+  "back": "Powrót",
   "distanceToPoint": "Odległość do punktu",
   "distanceNote": "Zalicza się, jeśli GPS pokaże, że jesteś w odległości {{distance}} metrów od punktu.",
 

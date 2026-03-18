@@ -65,6 +65,18 @@ export default function MapScreen({ selectedRoute }: MapScreenProps) {
   }, [userLocation]);
 
   const [overlayIndex, setOverlayIndex] = useState<number>(0);
+  const [isMapLoading, setIsMapLoading] = useState<boolean>(false);
+
+  const handleOverlayChange = (idx: number) => {
+    setIsMapLoading(true);
+    
+    setOverlayIndex(idx);
+    
+    setTimeout(() => {
+      setIsMapLoading(false);
+    }, 2200); 
+  };
+
   const { data: routesData } = useRoutesData();
   const { distanceToPoint } = useAppSettings();
 
@@ -182,7 +194,7 @@ export default function MapScreen({ selectedRoute }: MapScreenProps) {
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const mapEntryKeys = ["map.none", "map.map1", "map.map2", "map.map3", "map.map4", "map.map5", "map.map6"];
+  const mapEntryKeys = ["map.none", "map.map1", "map.map2", "map.map3", "map.map4", "map.map5"];
   const translatedEntries = mapEntryKeys.map((k) => t(k));
   const mapLabels = { none: t("map.none"), mapPrefix: t("map.prefix") };
 
@@ -223,7 +235,8 @@ export default function MapScreen({ selectedRoute }: MapScreenProps) {
         pointsText={`${donePoints}/${totalPoints}`}
         distanceText={`${(distanceTravelled / 1000).toFixed(2)} km`}
         overlayIndex={overlayIndex}
-        onOverlayChange={(idx: number) => setOverlayIndex(idx)}
+        onOverlayChange={handleOverlayChange}
+        isMapLoading={isMapLoading}
         translatedEntries={translatedEntries}
         mapLabels={mapLabels}
         themeColors={{ primary: THEME.primary, onPrimary: THEME.onPrimary, onSurface: THEME.onSurface }}

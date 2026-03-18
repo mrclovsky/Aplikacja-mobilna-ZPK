@@ -78,7 +78,7 @@ export default function RoutesListScreen({ onSelectRoute }: RoutesListScreenProp
     >
       {isLoading && (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={THEME.brand} />
+          <ActivityIndicator size="large" color={THEME.text} />
           <Text style={styles.loadingText}>{t("loading") || "Loading..."}</Text>
         </View>
       )}

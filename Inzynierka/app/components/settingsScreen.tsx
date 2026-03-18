@@ -82,14 +82,14 @@ export default function SettingsScreen() {
             activeOpacity={0.7}
           >
             {isRefreshingDistance ? (
-              <ActivityIndicator size="small" color={THEME.brand} />
+              <ActivityIndicator size="small" color={THEME.text} />
             ) : (
-              <Ionicons name="refresh" size={24} color={THEME.brand} />
+              <Ionicons name="refresh" size={24} color={THEME.text} />
             )}
           </TouchableOpacity>
         </View>
         {isLoadingDistance ? (
-          <ActivityIndicator size="small" color={THEME.brand} style={styles.distanceLoader} />
+          <ActivityIndicator size="small" color={THEME.text} style={styles.distanceLoader} />
         ) : (
           <>
             <Text style={styles.distanceValue}>{distanceToPoint} m</Text>
@@ -101,7 +101,7 @@ export default function SettingsScreen() {
       </View>
 
       <TouchableOpacity style={styles.logoutButton} onPress={handleBackToStart} activeOpacity={0.85}>
-        <Text style={styles.logoutButtonText}>{t("backToStart")}</Text>
+        <Text style={styles.logoutButtonText}>{t("back")}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
   },
   distanceValue: {
     fontSize: 32,
-    color: THEME.brand,
+    color: THEME.text,
     fontWeight: "bold",
     marginBottom: 8,
   },

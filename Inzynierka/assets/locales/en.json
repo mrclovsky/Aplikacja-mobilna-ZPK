@@ -4,6 +4,7 @@
   "welcome": "Hello!",
   "login": "Login",
   "register": "Register",
+  "letsgo": "Let's go!",
 
   "loginTitle": "Login",
   "username": "Username",
@@ -15,7 +16,7 @@
 
   "settingsPage": "Settings",
   "logoutButton": "Logout",
-  "backToStart": "Back to start",
+  "back": "Return",
   "distanceToPoint": "Distance to point",
   "distanceNote": "It counts if the GPS shows you're within {{distance}} meters of the point.",
 

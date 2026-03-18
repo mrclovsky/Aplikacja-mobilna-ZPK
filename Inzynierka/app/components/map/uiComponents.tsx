@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
+  ActivityIndicator,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -125,12 +126,14 @@ export function MapSelectButton({
   entries,
   navigationActive,
   labels = { none: "Brak", mapPrefix: "M" },
+  isLoading = false,
 }: {
   selectedIndex: number;
   onSelect: (index: number) => void;
   entries: string[];
   navigationActive: boolean;
   labels?: { none: string; mapPrefix?: string };
+  isLoading?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const anim = useRef(new Animated.Value(navigationActive ? 1 : 0)).current;
@@ -143,8 +146,12 @@ export function MapSelectButton({
     }).start();
   }, [navigationActive, anim]);
 
-  const toggleOpen = () => setOpen((s) => !s);
+  const toggleOpen = () => {
+    if (isLoading) return;
+    setOpen((s) => !s);
+  };
   const handleSelect = (idx: number) => {
+    if (isLoading) return;
     onSelect(idx);
     setOpen(false);
   };
@@ -220,13 +227,18 @@ export function MapSelectButton({
           activeOpacity={0.85}
           accessibilityRole="button"
           accessibilityLabel="Wybór mapy"
+          disabled={isLoading}
         >
+          {isLoading ? (
+            <ActivityIndicator size="small" color="#000" />
+          ) : (
           <View style={styles.mapSelectContentInline}>
             <Ionicons name="map-outline" size={18} color="#000" />
             <Text numberOfLines={1} ellipsizeMode="tail" style={styles.mapSelectLabel}>
               {label}
             </Text>
           </View>
+          )}
         </TouchableOpacity>
       </Animated.View>
     </>

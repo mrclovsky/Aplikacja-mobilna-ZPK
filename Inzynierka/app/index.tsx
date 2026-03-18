@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
-import { Animated, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Animated, ImageBackground, StyleSheet, Text, TouchableOpacity, View, Image } from "react-native";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
@@ -72,6 +72,19 @@ export default function WelcomeScreen() {
   return (
     <ImageBackground source={backgroundImage} style={styles.background} imageStyle={{ opacity: 0.7 }}>
       <View style={styles.container}>
+        <View style={styles.topContainer}>
+          <View style={styles.brandWrapper}>
+            <Text style={styles.brandMain}>ZPK</Text>
+            <View style={styles.brandDot} />
+            <Text style={styles.brandSub}>UMG</Text>
+          </View>
+          
+          <Image 
+            source={require("../assets/images/icon.png")} 
+            style={styles.logoIcon} 
+          />
+        </View>
+
         <Animated.Text style={[styles.title, { transform: [{ translateY: slideAnim }] }]}>
           {titleText}
         </Animated.Text>
@@ -83,7 +96,7 @@ export default function WelcomeScreen() {
           accessibilityRole="button"
           accessibilityLabel="Start application"
         >
-          <Text style={styles.buttonText}>{t("start")}</Text>
+          <Text style={styles.buttonText}>{t("letsgo")}</Text>
         </TouchableOpacity>
 
         <View style={[styles.langContainer, { position: "absolute", bottom: 40 }]}>
@@ -150,4 +163,46 @@ const styles = StyleSheet.create({
   },
   buttonMargin: { marginTop: 20 },
   buttonText: { color: THEME.text, fontSize: 18, fontWeight: "600" },
+
+  topContainer: {
+    position: 'absolute',
+    top: 70,               
+    alignItems: 'center',
+  },
+  brandWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  brandMain: {
+    fontSize: 42,
+    fontWeight: '900',
+    color: '#fff',
+    letterSpacing: 2,
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+  },
+  brandDot: {
+    width: 12,
+    height: 4,
+    backgroundColor: THEME.brand,
+    marginHorizontal: 15,
+  },
+  brandSub: {
+    fontSize: 32,
+    fontWeight: '300',
+    color: '#fff',
+    letterSpacing: 1,
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+  },
+  logoIcon: {
+    width: 70,
+    height: 70,
+    borderRadius: 50,
+    borderWidth: 2,
+    borderColor: THEME.brand,
+  },
 });

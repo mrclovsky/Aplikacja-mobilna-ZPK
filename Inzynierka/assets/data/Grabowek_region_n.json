@@ -1,9 +1,0 @@
-{
-  "region": "Grabowek",
-  "wgs84_corners": {
-  "tl": { "longitude": 18.4752428, "latitude": 54.5286023},
-  "tr": { "longitude": 18.5138566, "latitude": 54.5287637},
-  "br": { "longitude": 18.5138566, "latitude": 54.4982203},
-  "bl": { "longitude": 18.4756341, "latitude": 54.4980591}
-  }
-}
